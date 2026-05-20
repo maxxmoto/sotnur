@@ -10,6 +10,9 @@ venv/
 dist/
 build/
 
+# Database (auto-seeded on first run)
+data.json
+
 # IDE
 .vscode/
 .idea/

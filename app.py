@@ -19,9 +19,9 @@ try:
 except ImportError:
     FPDF_AVAILABLE = False
 
-# Telegram конфигурация
-TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN', '8687324068:AAFRwXnlIu_WNB6qfTMtetG0idyVsRxk5vM')
-TELEGRAM_CHAT_ID = os.environ.get('TELEGRAM_CHAT_ID', '903104535')
+# Telegram конфигурация (только через переменные окружения!)
+TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN', '')
+TELEGRAM_CHAT_ID = os.environ.get('TELEGRAM_CHAT_ID', '')
 
 # Email конфигурация для уведомлений
 EMAIL_HOST = 'smtp.yandex.ru'
@@ -88,7 +88,7 @@ def send_email_notification(subject, body):
 
 # Конфигурация приложения
 app = Flask(__name__)
-app.secret_key = 'sotnur_secret_key_2026'
+app.secret_key = os.environ.get('SECRET_KEY', os.urandom(24).hex())
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50 MB max для загрузки фото
 
@@ -142,6 +142,39 @@ def save_data(data):
     """Сохранение данных в JSON-файл"""
     with open(DATA_FILE, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
+
+
+def seed_default_houses():
+    """Создаёт тестовые дома при первом запуске (если база пуста)"""
+    data = load_data()
+    if data.get('houses'):
+        return
+    default_houses = [
+        {
+            "id": 1,
+            "name": "Сосновый бор",
+            "short_desc": "Уютный дом в сосновом лесу",
+            "description": "Дом в тихом месте, окружённый соснами. Идеально для семейного отдыха.",
+            "price": 8000,
+            "max_guests": 4,
+            "images": ["https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600"],
+            "amenities": ["Баня", "Мангал", "Купель", "Wi-Fi"],
+            "calendar": {}
+        },
+        {
+            "id": 2,
+            "name": "Дом на берегу озера",
+            "short_desc": "Дом с видом на озеро",
+            "description": "Просторный дом прямо у воды. Своя купель и баня.",
+            "price": 12000,
+            "max_guests": 6,
+            "images": ["https://images.unsplash.com/photo-1449157291145-7efd050a4d0e?w=600"],
+            "amenities": ["Баня", "Мангал", "Купель", "Wi-Fi", "Лодка"],
+            "calendar": {}
+        }
+    ]
+    data['houses'] = default_houses
+    save_data(data)
 
 
 def get_house(house_id):
@@ -1272,6 +1305,9 @@ if __name__ == '__main__':
     # Создаём директорию для загрузок если нет
     if not os.path.exists(UPLOADS_DIR):
         os.makedirs(UPLOADS_DIR)
+    
+    # Создаём тестовые дома при первом запуске
+    seed_default_houses()
     
     print("=" * 50)
     print("SOTNUR - Server started!")
