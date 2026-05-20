@@ -941,11 +941,15 @@ def admin_calendar_update(house_id):
                 house['calendar'] = {}
             
             if status == 'free':
-                # Удаляем дату из календаря (свободна)
                 if date_str in house['calendar']:
-                    del house['calendar'][date_str]
+                    if special_price:
+                        # Только цена, без брони
+                        house['calendar'][date_str] = {'price': special_price}
+                    else:
+                        del house['calendar'][date_str]
+                elif special_price:
+                    house['calendar'][date_str] = {'price': special_price}
             else:
-                # Занимаем/резервируем дату
                 if special_price:
                     house['calendar'][date_str] = {'status': status, 'price': special_price}
                 else:

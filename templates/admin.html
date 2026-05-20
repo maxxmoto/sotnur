@@ -1509,11 +1509,11 @@
         await fetch('/admin/calendar/' + houseId + '/update', { 
             method: 'POST', 
             headers: {'Content-Type': 'application/json'}, 
-            body: JSON.stringify({date: priceModalDate, status: 'booked', price: price})
+            body: JSON.stringify({date: priceModalDate, status: price ? 'free' : 'booked', price: price})
         });
         
         if (price) {
-            houseCalendar[priceModalDate] = {status: 'booked', price: price};
+            houseCalendar[priceModalDate] = {price: price};
         } else {
             houseCalendar[priceModalDate] = 'booked';
         }
@@ -1534,15 +1534,15 @@
         await fetch('/admin/calendar/' + houseId + '/update', { 
             method: 'POST', 
             headers: {'Content-Type': 'application/json'}, 
-            body: JSON.stringify({date: dateStr, status: 'booked', price: price})
+            body: JSON.stringify({date: dateStr, status: price ? 'free' : 'booked', price: price})
         });
         
         if (price) {
-            houseCalendar[dateStr] = {status: 'booked', price: price};
+            houseCalendar[dateStr] = {price: price};
             showToast(`Цена ${price}₽ установлена на ${dateStr}`, 'success');
         } else {
             houseCalendar[dateStr] = 'booked';
-            showToast(`Дата ${dateStr} забронирована по базовой цене`, 'success');
+            showToast(`Дата ${dateStr} забронирована`, 'success');
         }
         
         renderCalendar();
@@ -1553,18 +1553,18 @@
     async function toggleDate(dateStr) {
         const existing = houseCalendar[dateStr];
         const isBooked = existing === 'booked' || (existing && existing.status === 'booked');
+        const existingPrice = existing && existing.price;
         
-        // Клик меняет статус: занято <-> свободно
         await fetch('/admin/calendar/' + houseId + '/update', { 
             method: 'POST', 
             headers: {'Content-Type': 'application/json'}, 
-            body: JSON.stringify({date: dateStr, status: isBooked ? 'free' : 'booked'})
+            body: JSON.stringify({date: dateStr, status: isBooked ? 'free' : 'booked', price: existingPrice})
         });
         
         if (isBooked) {
             delete houseCalendar[dateStr];
         } else {
-            houseCalendar[dateStr] = 'booked';
+            houseCalendar[dateStr] = existingPrice ? {status: 'booked', price: existingPrice} : 'booked';
         }
         renderCalendar();
     }

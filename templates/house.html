@@ -294,7 +294,8 @@ function renderAirbnbCalendar(target) {
         if (!cell) {
             html += '<div class="cal-day disabled"></div>';
         } else {
-            var isBooked = bookedDates && bookedDates[cell.dateStr];
+            var dateEntry = bookedDates && bookedDates[cell.dateStr];
+            var isBooked = dateEntry && (dateEntry === 'booked' || dateEntry.status === 'booked');
             var isSelected = selectedDates[target] === cell.dateStr;
             var isCheckin = selectedDates.checkin === cell.dateStr;
             var isCheckout = selectedDates.checkout === cell.dateStr;
@@ -319,13 +320,10 @@ function renderAirbnbCalendar(target) {
                 }
             }
 
-            // Показываем цену: особая цена из календаря или базовая цена дома
             var priceHtml = '';
             var cellPrice = null;
-            if (bookedDates && bookedDates[cell.dateStr]) {
-                if (bookedDates[cell.dateStr].price) {
-                    cellPrice = bookedDates[cell.dateStr].price;
-                }
+            if (dateEntry && dateEntry.price) {
+                cellPrice = dateEntry.price;
             }
             if (!cellPrice && !cell.isPast && !isBooked) {
                 cellPrice = houseBasePrice;
@@ -356,7 +354,8 @@ function selectAirbnbDate(target, dateStr) {
     today.setHours(0, 0, 0, 0);
 
     if (currentDate < today) return;
-    if (bookedDates && bookedDates[dateStr]) return;
+    var dateEntry = bookedDates && bookedDates[dateStr];
+    if (dateEntry && (dateEntry === 'booked' || dateEntry.status === 'booked')) return;
 
     selectedDates[target] = dateStr;
 
