@@ -1,0 +1,460 @@
+{% extends "base.html" %}
+
+{% block title %}{{ house.name }} — SOTNUR{% endblock %}
+
+{% block content %}
+<!-- Страница дома -->
+<section class="house-page">
+    <div class="container">
+        <!-- Навигация назад -->
+        <a href="/" class="back-link">← Назад к домам</a>
+        
+        <!-- Галерея -->
+        <div class="house-gallery">
+            {% if house.images and house.images|length > 0 %}
+            <div class="gallery-main">
+                {% if house.images|length > 1 %}
+                <div class="gallery-carousel">
+                    {% for img in house.images %}
+                    <img src="{% if img.startswith('http') %}{{ img }}{% else %}/{{ img }}{% endif %}" alt="{{ house.name }}" class="gallery-img {% if loop.first %}active{% endif %}" data-index="{{ loop.index0 }}" loading="lazy">
+                    {% endfor %}
+                    <button class="gallery-nav gallery-prev" onclick="gallerySlide(-1)">❮</button>
+                    <button class="gallery-nav gallery-next" onclick="gallerySlide(1)">❯</button>
+                    <div class="gallery-dots">
+                        {% for img in house.images %}
+                        <span class="gallery-dot {% if loop.first %}active{% endif %}" onclick="galleryGoTo({{ loop.index0 }})"></span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% else %}
+                <img src="{% if house.images[0].startswith('http') %}{{ house.images[0] }}{% else %}/{{ house.images[0] }}{% endif %}" alt="{{ house.name }}" class="gallery-img active">
+                {% endif %}
+            </div>
+            <div class="gallery-thumbs">
+                {% for img in house.images %}
+                <button class="gallery-thumb {% if loop.first %}active{% endif %}" data-img="{{ img }}" onclick="galleryGoTo({{ loop.index0 }})">
+                    <img src="{% if img.startswith('http') %}{{ img }}{% else %}/{{ img }}{% endif %}" alt="" loading="lazy">
+                </button>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="gallery-main">
+                <img src="https://images.unsplash.com/photo-1518780664697-55e3ad937233?w=800" alt="{{ house.name }}" class="gallery-img active">
+            </div>
+            <p style="text-align: center; color: var(--text-muted); padding: 20px;">Фотографии скоро появятся</p>
+            {% endif %}
+        </div>
+        
+        <div class="house-detail-grid">
+            <!-- Левая колонка - информация -->
+            <div class="house-info">
+                <h1 class="house-title">{{ house.name }}
+                    <button class="share-btn" onclick="shareHouse()" title="Поделиться">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="18" cy="5" r="3"></circle>
+                            <circle cx="6" cy="12" r="3"></circle>
+                            <circle cx="18" cy="19" r="3"></circle>
+                            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                        </svg>
+                    </button>
+                </h1>
+                
+                <div class="house-price">
+                    <span class="price-amount">{{ house.price }}</span>
+                    <span class="price-period">₽ / ночь</span>
+                </div>
+                
+                <div class="house-meta-detail">
+                    <span class="meta-detail-item">
+                        <span class="meta-icon">👥</span>
+                        Вместимость: до {{ house.max_guests }} гостей
+                    </span>
+                </div>
+                
+                <!-- Описание -->
+                <div class="house-section">
+                    <h2 class="house-section-title">Описание</h2>
+                    <p class="house-full-desc">{{ house.full_desc }}</p>
+                </div>
+                
+                <!-- Удобства -->
+                <div class="house-section">
+                    <h2 class="house-section-title">Удобства</h2>
+                    <div class="amenities-grid">
+                        {% for amenity in house.amenities %}
+                        <div class="amenity-item">
+                            <span class="amenity-check">✓</span>
+                            <span>{{ amenity }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- Отзывы -->
+                {% if reviews %}
+                <div class="house-section">
+                    <h2 class="house-section-title">Отзывы гостей</h2>
+                    <div class="reviews-list">
+                        {% for review in reviews %}
+                        <div class="review-card glass">
+                            <div class="review-header">
+                                <img src="{{ review.avatar }}" alt="{{ review.author }}" class="review-avatar">
+                                <div class="review-meta">
+                                    <span class="review-author">{{ review.author }}</span>
+                                    <div class="review-rating">
+                                        {% for i in range(review.rating) %}★{% endfor %}
+                                        {% for i in range(5 - review.rating) %}☆{% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="review-text">{{ review.text }}</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Правая колонка - бронирование -->
+            <div class="house-booking">
+                <div class="booking-card glass">
+                    <h3 class="booking-title">Забронировать</h3>
+                    
+                    <!-- Календарь занятости -->
+                    <div class="booking-calendar">
+                        <div class="calendar-header">
+                            <button class="calendar-nav" id="prev-month" aria-label="Предыдущий месяц">❮</button>
+                            <span id="calendar-month-year"></span>
+                            <button class="calendar-nav" id="next-month" aria-label="Следующий месяц">❯</button>
+                        </div>
+                        <div class="calendar-weekdays">
+                            <span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span>
+                        </div>
+                        <div class="calendar-days" id="calendar-days"></div>
+                        <div class="calendar-legend">
+                            <span class="legend-item"><span class="legend-color free"></span> Свободно</span>
+                            <span class="legend-item"><span class="legend-color booked"></span> Занято</span>
+                        </div>
+                    </div>
+                    
+                    <form method="POST" action="/book" class="booking-form-detail">
+                        <input type="hidden" name="house_id" value="{{ house.id }}">
+                        <div class="form-group">
+                            <label for="name">Ваше имя</label>
+                            <input type="text" id="name" name="name" required placeholder="Иван">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Телефон</label>
+                            <input type="tel" id="phone" name="phone" required placeholder="+7 (999) 000-00-00">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Заезд</label>
+                                <div class="airbnb-calendar" id="checkin-calendar">
+                                    <input type="hidden" id="checkin" name="checkin" required>
+                                    <div class="calendar-trigger" id="checkin-trigger" data-target="checkin">Выберите дату</div>
+                                    <div class="calendar-dropdown" id="checkin-dropdown">
+                                        <div class="calendar-header">
+                                            <button type="button" class="cal-prev" onclick="airbnbCalPrev('checkin')">←</button>
+                                            <span class="cal-month-year" id="checkin-month-year"></span>
+                                            <button type="button" class="cal-next" onclick="airbnbCalNext('checkin')">→</button>
+                                        </div>
+                                        <div class="cal-weekdays">
+                                            <span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span>
+                                        </div>
+                                        <div class="cal-days" id="checkin-days"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>Выезд</label>
+                                <div class="airbnb-calendar" id="checkout-calendar">
+                                    <input type="hidden" id="checkout" name="checkout" required>
+                                    <div class="calendar-trigger" id="checkout-trigger" data-target="checkout">Выберите дату</div>
+                                    <div class="calendar-dropdown" id="checkout-dropdown">
+                                        <div class="calendar-header">
+                                            <button type="button" class="cal-prev" onclick="airbnbCalPrev('checkout')">←</button>
+                                            <span class="cal-month-year" id="checkout-month-year"></span>
+                                            <button type="button" class="cal-next" onclick="airbnbCalNext('checkout')">→</button>
+                                        </div>
+                                        <div class="cal-weekdays">
+                                            <span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span>
+                                        </div>
+                                        <div class="cal-days" id="checkout-days"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-consent">
+                            <input type="checkbox" id="house-consent" required>
+                            <label for="house-consent">Я согласен на <a href="#" onclick="showPrivacy(event)">обработку персональных данных</a> и принимаю <a href="#" onclick="showTerms(event)">правила бронирования</a></label>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-full" id="house-submit-btn" disabled>Забронировать</button>
+                    </form>
+                    <div class="house-loading" id="house-loading" style="display: none;">
+                        <div class="loading-spinner"></div>
+                        <p class="loading-text">Открываем книгу бронирований<span class="loading-dots"></span></p>
+                    </div>
+                    
+                    <p class="booking-note">Мы перезвоним вам для подтверждения брони</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const bookedDates = {{ booked_dates | tojson | safe }};
+const houseId = {{ house.id }};
+const houseBasePrice = {{ house.price }};
+
+// Активация кнопки при согласии
+var houseConsent = document.getElementById('house-consent');
+var houseSubmitBtn = document.getElementById('house-submit-btn');
+if (houseConsent && houseSubmitBtn) {
+    houseConsent.addEventListener('change', function() {
+        houseSubmitBtn.disabled = !this.checked;
+    });
+}
+
+// Анимация при отправке формы бронирования
+var houseForm = document.querySelector('.booking-form-detail');
+if (houseForm) {
+    houseForm.addEventListener('submit', function(e) {
+        var loading = document.getElementById('house-loading');
+        if (loading) {
+            houseForm.style.display = 'none';
+            loading.style.display = 'flex';
+            
+            var dotCount = 0;
+            var dotsEl = loading.querySelector('.loading-dots');
+            var dots = ['.', '..', '...'];
+            setInterval(function() {
+                dotCount = (dotCount + 1) % 3;
+                if (dotsEl) dotsEl.textContent = dots[dotCount];
+            }, 500);
+        }
+    });
+}
+
+// === Airbnb Calendar (рефакторинг: использует SotnurCalendarUtils) ===
+var currentMonths = {
+    checkin: new Date(),
+    checkout: new Date()
+};
+
+var selectedDates = {
+    checkin: null,
+    checkout: null
+};
+
+function initAirbnbCalendar() {
+    document.querySelectorAll('.calendar-trigger').forEach(function(trigger) {
+        trigger.addEventListener('click', function() {
+            var target = this.dataset.target;
+            var dropdown = document.getElementById(target + '-dropdown');
+            document.querySelectorAll('.calendar-dropdown').forEach(function(d) {
+                if (d !== dropdown) d.classList.remove('active');
+            });
+            dropdown.classList.toggle('active');
+            renderAirbnbCalendar(target);
+        });
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.airbnb-calendar')) {
+            document.querySelectorAll('.calendar-dropdown').forEach(function(d) {
+                d.classList.remove('active');
+            });
+        }
+    });
+}
+
+function renderAirbnbCalendar(target) {
+    var monthYearEl = document.getElementById(target + '-month-year');
+    var daysEl = document.getElementById(target + '-days');
+    var date = currentMonths[target];
+
+    monthYearEl.textContent = SotnurCalendarUtils.monthNamesFull[date.getMonth()] + ' ' + date.getFullYear();
+
+    // Анимация смены месяца (fade)
+    if (daysEl) {
+        daysEl.style.opacity = '0';
+        daysEl.style.transform = 'translateY(8px)';
+    }
+
+    var grid = SotnurCalendarUtils.buildMonthGrid(date.getFullYear(), date.getMonth());
+
+    var html = '';
+    for (var i = 0; i < grid.length; i++) {
+        var cell = grid[i];
+        if (!cell) {
+            html += '<div class="cal-day disabled"></div>';
+        } else {
+            var isBooked = bookedDates && bookedDates[cell.dateStr];
+            var isSelected = selectedDates[target] === cell.dateStr;
+            var isCheckin = selectedDates.checkin === cell.dateStr;
+            var isCheckout = selectedDates.checkout === cell.dateStr;
+
+            var classes = ['cal-day'];
+
+            if (cell.isPast || isBooked) {
+                classes.push('disabled');
+            }
+            if (isBooked) {
+                classes.push('booked');
+            }
+            if (isSelected || isCheckin || isCheckout) {
+                classes.push('selected');
+                if (isCheckin) classes.push('checkin');
+                if (isCheckout) classes.push('checkout');
+            }
+
+            if (selectedDates.checkin && selectedDates.checkout) {
+                if (cell.dateStr > selectedDates.checkin && cell.dateStr < selectedDates.checkout) {
+                    classes.push('in-range');
+                }
+            }
+
+            // Показываем цену: особая цена из календаря или базовая цена дома
+            var priceHtml = '';
+            var cellPrice = null;
+            if (bookedDates && bookedDates[cell.dateStr]) {
+                if (bookedDates[cell.dateStr].price) {
+                    cellPrice = bookedDates[cell.dateStr].price;
+                }
+            }
+            if (!cellPrice && !cell.isPast && !isBooked) {
+                cellPrice = houseBasePrice;
+            }
+            if (cellPrice) {
+                priceHtml = '<span class="cal-day-price">' + cellPrice + '₽</span>';
+            }
+
+            html += '<div class="' + classes.join(' ') + '" data-date="' + cell.dateStr + '" onclick="selectAirbnbDate(\'' + target + '\', \'' + cell.dateStr + '\')">' + cell.day + priceHtml + '</div>';
+        }
+    }
+
+    daysEl.innerHTML = html;
+
+    // Плавное появление
+    setTimeout(function() {
+        if (daysEl) {
+            daysEl.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+            daysEl.style.opacity = '1';
+            daysEl.style.transform = 'translateY(0)';
+        }
+    }, 10);
+}
+
+function selectAirbnbDate(target, dateStr) {
+    var currentDate = new Date(dateStr);
+    var today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (currentDate < today) return;
+    if (bookedDates && bookedDates[dateStr]) return;
+
+    selectedDates[target] = dateStr;
+
+    var trigger = document.getElementById(target + '-trigger');
+    var input = document.getElementById(target);
+    var dateObj = new Date(dateStr);
+
+    trigger.textContent = dateObj.getDate() + ' ' + SotnurCalendarUtils.monthNames[dateObj.getMonth()];
+    input.value = dateStr;
+
+    document.getElementById(target + '-dropdown').classList.remove('active');
+
+    renderAirbnbCalendar('checkin');
+    renderAirbnbCalendar('checkout');
+}
+
+function airbnbCalPrev(target) {
+    currentMonths[target].setMonth(currentMonths[target].getMonth() - 1);
+    renderAirbnbCalendar(target);
+}
+
+function airbnbCalNext(target) {
+    currentMonths[target].setMonth(currentMonths[target].getMonth() + 1);
+    renderAirbnbCalendar(target);
+}
+
+initAirbnbCalendar();
+
+// Gallery - делаем функции глобальными
+var galleryCurrentSlide = 0;
+
+function gallerySlide(direction) {
+    var slides = document.querySelectorAll('.gallery-img');
+    var dots = document.querySelectorAll('.gallery-dot');
+    var thumbs = document.querySelectorAll('.gallery-thumb');
+    var totalSlides = slides.length;
+    
+    if (totalSlides <= 1) return;
+    
+    slides[galleryCurrentSlide].classList.remove('active');
+    if (dots[galleryCurrentSlide]) dots[galleryCurrentSlide].classList.remove('active');
+    if (thumbs[galleryCurrentSlide]) thumbs[galleryCurrentSlide].classList.remove('active');
+    
+    galleryCurrentSlide += direction;
+    if (galleryCurrentSlide >= totalSlides) galleryCurrentSlide = 0;
+    if (galleryCurrentSlide < 0) galleryCurrentSlide = totalSlides - 1;
+    
+    slides[galleryCurrentSlide].classList.add('active');
+    if (dots[galleryCurrentSlide]) dots[galleryCurrentSlide].classList.add('active');
+    if (thumbs[galleryCurrentSlide]) thumbs[galleryCurrentSlide].classList.add('active');
+}
+
+function galleryGoTo(index) {
+    var slides = document.querySelectorAll('.gallery-img');
+    var dots = document.querySelectorAll('.gallery-dot');
+    var thumbs = document.querySelectorAll('.gallery-thumb');
+    
+    slides.forEach(function(s) { s.classList.remove('active'); });
+    dots.forEach(function(d) { d.classList.remove('active'); });
+    thumbs.forEach(function(t) { t.classList.remove('active'); });
+    
+    galleryCurrentSlide = index;
+    slides[galleryCurrentSlide].classList.add('active');
+    if (dots[galleryCurrentSlide]) dots[galleryCurrentSlide].classList.add('active');
+    if (thumbs[galleryCurrentSlide]) thumbs[galleryCurrentSlide].classList.add('active');
+}
+
+// Auto slide
+setInterval(function() { gallerySlide(1); }, 5000);
+
+// Share button
+function shareHouse() {
+    const url = window.location.href;
+    const title = document.querySelector('.house-title').textContent.replace('Поделиться', '').trim();
+    
+    if (navigator.share) {
+        navigator.share({
+            title: title,
+            url: url
+        }).catch(() => {});
+    } else {
+        navigator.clipboard.writeText(url).then(function() {
+            showToast('Ссылка скопирована!', 'success');
+        }).catch(function() {
+            prompt('Скопируйте ссылку:', url);
+        });
+    }
+}
+
+// Simple toast
+function showToast(message, type) {
+    const container = document.createElement('div');
+    container.className = 'toast-notification ' + type;
+    container.textContent = message;
+    container.style.cssText = 'position:fixed;top:20px;right:20px;padding:14px 20px;border-radius:10px;color:white;font-weight:500;z-index:9999;animation:toastIn 0.3s ease';
+    container.style.background = type === 'success' ? 'var(--primary)' : 'var(--admin-danger)';
+    document.body.appendChild(container);
+    setTimeout(() => container.remove(), 3000);
+}
+</script>
+{% endblock %}

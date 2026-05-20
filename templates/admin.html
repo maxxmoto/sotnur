@@ -1,0 +1,1703 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель SOTNUR</title>
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+    <!--
+    Стили админки вынесены в static/admin.css при рефакторинге.
+    Оставлено для обратной совместимости (закомментировано).
+    <style>
+        /* === ADMIN LIGHT CLOUD DESIGN === */
+        :root {
+            --admin-bg: #f8f7f4;
+            --admin-surface: #ffffff;
+            --admin-surface-2: #f5f3ef;
+            --admin-border: #e8e5df;
+            --admin-text: #4a4a4a;
+            --admin-text-muted: #9a9a9a;
+            --admin-accent: #5a8a6b;
+            --admin-accent-hover: #4a7a5b;
+            --admin-gold: #d4c4a8;
+            --admin-gold-dark: #b8a888;
+            --admin-danger: #d87a7a;
+            --admin-blue: #6a9ecb;
+            --admin-purple: #9b8acb;
+            --admin-shadow: 0 2px 12px rgba(0,0,0,0.04);
+            --admin-shadow-lg: 0 8px 32px rgba(0,0,0,0.08);
+            --admin-radius: 14px;
+            --admin-radius-sm: 10px;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: 'Nunito', -apple-system, sans-serif;
+            background: var(--admin-bg);
+            color: var(--admin-text);
+            min-height: 100vh;
+        }
+
+        /* Layout */
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .admin-sidebar {
+            background: var(--admin-surface);
+            border-right: 1px solid var(--admin-border);
+            padding: 16px;
+            width: 220px;
+            flex-shrink: 0;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: var(--admin-shadow);
+            position: sticky;
+            top: 0;
+        }
+
+        .admin-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 18px;
+            font-weight: 700;
+            padding: 8px 12px 16px;
+            border-bottom: 1px solid var(--admin-border);
+            margin-bottom: 16px;
+            color: var(--admin-accent);
+        }
+
+        .admin-logo span:first-child { font-size: 22px; }
+
+        .admin-badge {
+            background: var(--admin-accent);
+            color: white;
+            font-size: 8px;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-weight: 600;
+            margin-left: auto;
+        }
+
+        /* Navigation */
+        .admin-nav {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .admin-nav-section {
+            margin-bottom: 16px;
+        }
+
+        .admin-nav-title {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: var(--admin-text-muted);
+            padding: 0 12px;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .admin-nav li { margin-bottom: 2px; }
+
+        .admin-nav a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            color: var(--admin-text-muted);
+            text-decoration: none;
+            border-radius: var(--admin-radius-sm);
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+
+        .admin-nav a:hover {
+            background: var(--admin-surface-2);
+            color: var(--admin-text);
+        }
+
+        .admin-nav a.active {
+            background: var(--admin-accent);
+            color: white;
+            font-weight: 600;
+        }
+
+        .nav-icon { font-size: 15px; width: 18px; text-align: center; }
+
+        /* Main */
+        .admin-content {
+            flex: 1;
+            padding: 20px 30px;
+            background: var(--admin-bg);
+            min-width: 0;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .admin-title {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .admin-header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-search {
+            background: var(--admin-surface);
+            border: 1px solid var(--admin-border);
+            padding: 10px 14px;
+            border-radius: var(--admin-radius-sm);
+            font-size: 13px;
+            width: 200px;
+        }
+
+        .admin-search:focus {
+            outline: none;
+            border-color: var(--admin-accent);
+        }
+
+        .btn-add {
+            background: var(--admin-accent);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: var(--admin-radius-sm);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.15s;
+        }
+
+        .btn-add:hover {
+            background: var(--admin-accent-hover);
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--admin-surface);
+            border: 1px solid var(--admin-border);
+            border-radius: var(--admin-radius);
+            padding: 16px;
+        }
+
+        .stat-card:hover {
+            border-color: var(--admin-accent);
+        }
+
+        .stat-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .stat-icon.green { background: rgba(90, 138, 107, 0.1); }
+        .stat-icon.blue { background: rgba(106, 158, 203, 0.1); }
+        .stat-icon.gold { background: rgba(212, 196, 168, 0.2); }
+        .stat-icon.purple { background: rgba(155, 138, 203, 0.1); }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--admin-text-muted);
+        }
+
+        /* Cards */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 16px;
+        }
+
+        .house-card-admin {
+            background: var(--admin-surface);
+            border: 1px solid var(--admin-border);
+            border-radius: var(--admin-radius);
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+
+        .house-card-admin:hover {
+            border-color: var(--admin-accent);
+            box-shadow: var(--admin-shadow-lg);
+        }
+
+        .house-card-image {
+            height: 140px;
+            background: var(--admin-surface-2);
+            overflow: hidden;
+        }
+
+        .house-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .house-card-body {
+            padding: 14px;
+        }
+
+        .house-card-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .house-card-price {
+            color: var(--admin-accent);
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .house-card-meta {
+            display: flex;
+            gap: 10px;
+            color: var(--admin-text-muted);
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        .house-card-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid var(--admin-border);
+            background: var(--admin-surface);
+            color: var(--admin-text-muted);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+
+        .btn-action:hover {
+            background: var(--admin-surface-2);
+            color: var(--admin-text);
+        }
+
+        .btn-action.danger:hover {
+            border-color: var(--admin-danger);
+            color: var(--admin-danger);
+        }
+
+        /* Table */
+        .admin-table-wrap {
+            background: var(--admin-surface);
+            border: 1px solid var(--admin-border);
+            border-radius: var(--admin-radius);
+            overflow: hidden;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .admin-table th {
+            padding: 12px 14px;
+            text-align: left;
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--admin-text-muted);
+            background: var(--admin-surface-2);
+            font-weight: 600;
+        }
+
+        .admin-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--admin-border);
+            font-size: 13px;
+        }
+
+        .admin-table tr:hover td {
+            background: var(--admin-surface-2);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status-new { background: rgba(106, 158, 203, 0.1); color: var(--admin-blue); }
+        .status-confirmed { background: rgba(90, 138, 107, 0.1); color: var(--admin-accent); }
+        .status-cancelled { background: rgba(216, 122, 122, 0.1); color: var(--admin-danger); }
+
+        .table-actions { display: flex; gap: 6px; }
+
+        .btn-table {
+            padding: 6px 10px;
+            border: 1px solid var(--admin-border);
+            background: var(--admin-surface);
+            color: var(--admin-text-muted);
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 11px;
+        }
+
+        .btn-table:hover { background: var(--admin-surface-2); }
+        .btn-table.danger:hover { border-color: var(--admin-danger); color: var(--admin-danger); }
+
+        /* Modal */
+        .modal-admin {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.4);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-admin.show { display: flex; }
+
+        .modal-admin-content {
+            background: var(--admin-surface);
+            border-radius: 16px;
+            padding: 20px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--admin-shadow-lg);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .modal-header h2 {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            width: 28px;
+            height: 28px;
+            border: 1px solid var(--admin-border);
+            background: var(--admin-surface);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover { background: var(--admin-danger); color: white; border-color: var(--admin-danger); }
+
+        .form-group-admin {
+            margin-bottom: 14px;
+        }
+
+        .form-group-admin label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--admin-text-muted);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .form-group-admin input,
+        .form-group-admin textarea,
+        .form-group-admin select {
+            width: 100%;
+            padding: 10px 12px;
+            background: var(--admin-surface-2);
+            border: 1px solid var(--admin-border);
+            border-radius: 8px;
+            font-size: 13px;
+        }
+
+        .form-group-admin input:focus,
+        .form-group-admin textarea:focus {
+            outline: none;
+            border-color: var(--admin-accent);
+        }
+
+        .checkbox-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 10px;
+            background: var(--admin-surface-2);
+            border: 1px solid var(--admin-border);
+            border-radius: 6px;
+            font-size: 12px;
+        }
+
+        .checkbox-item input { width: auto; }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background: var(--admin-accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-submit:hover { background: var(--admin-accent-hover); }
+
+        /* Calendar */
+        .calendar-admin {
+            background: var(--admin-surface);
+            border: 1px solid var(--admin-border);
+            border-radius: var(--admin-radius);
+            padding: 16px;
+        }
+
+        .calendar-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .calendar-nav-btn {
+            padding: 8px 14px;
+            background: var(--admin-surface-2);
+            border: 1px solid var(--admin-border);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .calendar-nav-btn:hover { background: var(--admin-accent); color: white; border-color: var(--admin-accent); }
+
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+
+        .calendar-day-header {
+            padding: 8px;
+            text-align: center;
+            font-size: 10px;
+            color: var(--admin-text-muted);
+            font-weight: 600;
+        }
+
+        .calendar-day-admin {
+            padding: 10px;
+            text-align: center;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .calendar-day-admin:hover:not(.disabled) { background: var(--admin-surface-2); }
+        .calendar-day-admin.disabled { color: var(--admin-text-muted); }
+        .calendar-day-admin.free { background: rgba(90, 138, 107, 0.1); color: var(--admin-accent); }
+        .calendar-day-admin.booked { background: rgba(216, 122, 122, 0.1); color: var(--admin-danger); }
+        
+        .calendar-day-admin.custom-price {
+            background: rgba(90, 138, 107, 0.2) !important;
+            color: var(--admin-accent) !important;
+            font-weight: 700;
+        }
+        
+        .calendar-day-admin .cal-price {
+            font-size: 9px;
+            opacity: 0.9;
+        }
+        
+        .price-management {
+            background: var(--admin-surface);
+            border: 1px solid var(--admin-border);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .price-management h3 {
+            font-size: 16px;
+            margin: 0 0 16px;
+            color: var(--admin-text);
+        }
+        
+        .price-form-row {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+        
+        .price-form-row .form-group-admin {
+            flex: 1;
+            min-width: 140px;
+        }
+        
+        .price-form-row .btn-action {
+            padding: 12px 20px;
+            background: var(--admin-accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        
+        .price-form-row .btn-action:hover {
+            background: var(--admin-accent-hover);
+        }
+        
+        .price-info {
+            margin-top: 12px;
+            padding: 12px;
+            background: var(--admin-surface-2);
+            border-radius: 8px;
+            font-size: 13px;
+            color: var(--admin-text-muted);
+        }
+
+        .house-select-dropdown {
+            padding: 10px 16px;
+            border: 1px solid var(--admin-border);
+            border-radius: 8px;
+            background: var(--admin-surface);
+            color: var(--admin-text);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            min-width: 200px;
+        }
+
+        .house-select-dropdown:focus {
+            outline: none;
+            border-color: var(--admin-accent);
+        }
+
+        /* Settings */
+        .settings-section {
+            background: var(--admin-surface);
+            border: 1px solid var(--admin-border);
+            border-radius: var(--admin-radius);
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .settings-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 14px;
+        }
+
+        .status-select-mini {
+            padding: 4px 8px;
+            border: 1px solid var(--admin-border);
+            border-radius: 4px;
+            font-size: 11px;
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            top: 14px;
+            right: 14px;
+            width: 44px;
+            height: 44px;
+            background: var(--admin-accent);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            z-index: 1001;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--admin-shadow-lg);
+        }
+
+        .mobile-menu-btn span {
+            display: block;
+            width: 20px;
+            height: 2px;
+            background: white;
+            border-radius: 2px;
+            margin: 4px 0;
+        }
+
+        .mobile-back-btn {
+            display: none;
+            position: fixed;
+            top: 14px;
+            left: 14px;
+            width: 44px;
+            height: 44px;
+            background: var(--admin-surface);
+            border: 1px solid var(--admin-border);
+            border-radius: 10px;
+            cursor: pointer;
+            z-index: 1001;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            box-shadow: var(--admin-shadow);
+        }
+
+        /* Responsive */
+        @media (max-width: 1000px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn { display: flex; flex-direction: column; padding: 10px; }
+            .mobile-back-btn { display: flex; }
+            
+            .admin-sidebar {
+                position: fixed;
+                top: 0;
+                left: -280px;
+                width: 260px;
+                height: 100vh;
+                z-index: 1000;
+                transition: left 0.3s ease;
+                box-shadow: var(--admin-shadow-lg);
+            }
+            
+            .admin-sidebar.open {
+                left: 0;
+            }
+            
+            .admin-sidebar-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.4);
+                z-index: 999;
+            }
+            
+            .admin-sidebar-overlay.show {
+                display: block;
+            }
+            
+            .admin-content {
+                padding: 70px 14px 14px;
+            }
+            
+            .admin-header {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            
+            .admin-title {
+                font-size: 18px;
+                padding-right: 60px;
+            }
+            
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+            
+            .stat-card {
+                padding: 12px;
+            }
+            
+            .stat-value {
+                font-size: 20px;
+            }
+            
+            .form-group-admin input,
+            .form-group-admin textarea,
+            .form-group-admin select {
+                font-size: 14px;
+            }
+            
+            .checkbox-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            /* Таблицы */
+            .data-table {
+                display: block;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .data-table thead {
+                display: none;
+            }
+            
+            .data-table tbody {
+                display: block;
+            }
+            
+            .data-table tr {
+                display: block;
+                background: var(--admin-surface);
+                border-radius: 10px;
+                padding: 12px;
+                margin-bottom: 10px;
+                box-shadow: var(--admin-shadow);
+            }
+            
+            .data-table td {
+                display: flex;
+                justify-content: space-between;
+                padding: 8px 0;
+                border-bottom: 1px solid var(--admin-border);
+            }
+            
+            .data-table td::before {
+                content: attr(data-label);
+                font-weight: 600;
+                color: var(--admin-text-muted);
+                font-size: 12px;
+                text-transform: uppercase;
+            }
+            
+            .data-table td:last-child {
+                border-bottom: none;
+                justify-content: flex-end;
+            }
+            
+            /* Карточки домов */
+            .house-cards-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .house-card {
+                padding: 14px;
+            }
+            
+            .house-card-image {
+                height: 160px;
+            }
+            
+            .house-card-info {
+                padding: 12px;
+            }
+            
+            /* Формы */
+            .form-row-admin {
+                flex-direction: column;
+            }
+            
+            .form-row-admin .form-group-admin {
+                width: 100%;
+            }
+            
+            /* Кнопки действий */
+            .action-btns {
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+            
+            .btn-sm {
+                padding: 6px 10px;
+                font-size: 12px;
+            }
+            
+            /* Календарь */
+            .calendar-grid {
+                gap: 2px;
+            }
+            
+            .calendar-day-admin {
+                padding: 8px 2px;
+                font-size: 12px;
+            }
+            
+            /* Статистика */
+            .dashboard-stats {
+                flex-direction: column;
+            }
+            
+            .stat-item {
+                width: 100%;
+            }
+        }
+        
+        /* === Toast Notifications === */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .toast {
+            padding: 14px 20px;
+            border-radius: 10px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+            animation: toastIn 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .toast.success { background: var(--admin-accent); }
+        .toast.error { background: var(--admin-danger); }
+        .toast.info { background: var(--admin-blue); }
+        
+        @keyframes toastIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @keyframes toastOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+        
+        .toast.hiding {
+            animation: toastOut 0.3s ease forwards;
+        }
+        
+        /* === Welcome Banner === */
+        .welcome-banner {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9000;
+            animation: welcomeIn 0.5s ease;
+        }
+        
+        .welcome-banner.hidden {
+            display: none;
+        }
+        
+        @keyframes welcomeIn {
+            from { transform: translateX(-50%) translateY(-100%); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+        
+        .welcome-content {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: linear-gradient(135deg, var(--admin-accent) 0%, #7aba8b 100%);
+            padding: 16px 24px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(90, 138, 107, 0.3);
+            color: white;
+        }
+        
+        .welcome-icon {
+            font-size: 32px;
+        }
+        
+        .welcome-text h2 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 700;
+        }
+        
+        .welcome-text p {
+            margin: 4px 0 0;
+            font-size: 13px;
+            opacity: 0.9;
+        }
+        
+        .welcome-close {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            font-size: 20px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: background 0.2s;
+        }
+        
+        .welcome-close:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .welcome-banner {
+                left: 10px;
+                right: 10px;
+                transform: none;
+            }
+            .welcome-content {
+                flex-wrap: wrap;
+                padding: 12px 16px;
+            }
+            .welcome-text h2 {
+                font-size: 15px;
+            }
+        }
+    </style>
+    -->
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    {% if session.get('logged_in') %}
+    <!-- Mobile Buttons -->
+    <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Меню">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+    </button>
+    <a href="/admin" class="mobile-back-btn">←</a>
+    <div class="admin-sidebar-overlay" onclick="toggleMobileMenu()"></div>
+    
+    <div class="admin-layout">
+        <!-- Toast Container -->
+        <div class="toast-container" id="toast-container"></div>
+        
+        <!-- Welcome Banner - only on first dashboard visit -->
+        {% if page == 'dashboard' and show_welcome %}
+        <div class="welcome-banner" id="welcome-banner">
+            <div class="welcome-content">
+                <span class="welcome-icon">🏔️</span>
+                <div class="welcome-text">
+                    <h2>Добро пожаловать в SOTNUR!</h2>
+                    <p>Управляйте домами, бронированиями и отзывами</p>
+                </div>
+                <button class="welcome-close" onclick="closeWelcome()">×</button>
+            </div>
+        </div>
+        {% endif %}
+        
+        <aside class="admin-sidebar">
+            <div class="admin-logo">
+                <span>🏔️</span>
+                <span>SOTNUR</span>
+                <span class="admin-badge">Admin</span>
+            </div>
+            
+            <ul class="admin-nav">
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">Основное</div>
+                    <li><a href="/admin" class="{% if page == 'dashboard' or not page %}active{% endif %}">
+                        <span class="nav-icon">📊</span> Дашборд
+                    </a></li>
+                    <li><a href="/admin/bookings" class="{% if page == 'bookings' %}active{% endif %}">
+                        <span class="nav-icon">📋</span> Брони
+                    </a></li>
+                    <li><a href="/admin/houses" class="{% if page == 'houses' %}active{% endif %}">
+                        <span class="nav-icon">🏠</span> Дома
+                    </a></li>
+                </div>
+                
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">Управление</div>
+                    <li><a href="/admin/calendar/{{ houses[0].id if houses else 1 }}">
+                        <span class="nav-icon">📅</span> Календарь
+                    </a></li>
+                    <li><a href="/admin/reviews" class="{% if page == 'reviews' %}active{% endif %}">
+                        <span class="nav-icon">⭐</span> Отзывы
+                    </a></li>
+                </div>
+                
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">Система</div>
+                    <li><a href="/admin/analytics" class="{% if page == 'analytics' %}active{% endif %}">
+                        <span class="nav-icon">📈</span> Аналитика
+                    </a></li>
+                    <li><a href="/admin/settings" class="{% if page == 'settings' %}active{% endif %}">
+                        <span class="nav-icon">⚙️</span> Настройки
+                    </a></li>
+                </div>
+            </ul>
+        </aside>
+        
+        <div class="admin-content">
+            {% if page == 'dashboard' or not page %}
+            <div class="admin-header">
+                <h1 class="admin-title">Дашборд</h1>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon green">🏠</div>
+                    <div class="stat-value">{{ houses|length }}</div>
+                    <div class="stat-label">Всего домов</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon blue">📋</div>
+                    <div class="stat-value">{{ bookings|length }}</div>
+                    <div class="stat-label">Бронирований</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon gold">✓</div>
+                    <div class="stat-value">{{ bookings|selectattr('status', 'equalto', 'confirmed')|list|length }}</div>
+                    <div class="stat-label">Подтверждено</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon purple">⭐</div>
+                    <div class="stat-value">{{ reviews|length }}</div>
+                    <div class="stat-label">Отзывов</div>
+                </div>
+            </div>
+            
+            <h2 style="font-size: 18px; margin: 24px 0 16px;">Последние бронирования</h2>
+            
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr><th>ID</th><th>Гость</th><th>Дом</th><th>Даты</th><th>Статус</th><th>Действия</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for booking in bookings[:5] %}
+                        <tr>
+                            <td>#{{ booking.id }}</td>
+                            <td><div style="font-weight: 600;">{{ booking.name }}</div><div style="color: var(--admin-text-muted); font-size: 11px;"><a href="tel:{{ booking.phone|phone_link }}" class="phone-link">{{ booking.phone }}</a></div></td>
+                            <td>{% for h in houses %}{% if h.id == booking.house_id %}{{ h.name }}{% endif %}{% endfor %}</td>
+                            <td>{{ booking.checkin }} — {{ booking.checkout }}</td>
+                            <td><span class="status-badge status-{{ booking.status }}">{% if booking.status == 'new' %}Новое{% elif booking.status == 'confirmed' %}Подтверждено{% elif booking.status == 'cancelled' %}Отменено{% endif %}</span></td>
+                            <td>
+                                <select onchange="updateStatus({{ booking.id }}, this.value)" class="status-select-mini">
+                                    <option value="new" {% if booking.status == 'new' %}selected{% endif %}>Новое</option>
+                                    <option value="confirmed" {% if booking.status == 'confirmed' %}selected{% endif %}>Подтвердить</option>
+                                    <option value="cancelled" {% if booking.status == 'cancelled' %}selected{% endif %}>Отменить</option>
+                                </select>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+            
+            {% if page == 'bookings' %}
+            <div class="admin-header">
+                <h1 class="admin-title">Бронирования</h1>
+            </div>
+            
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr><th>ID</th><th>Гость</th><th>Дом</th><th>Заезд</th><th>Выезд</th><th>Статус</th><th>Действия</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for booking in bookings %}
+                        <tr>
+                            <td>#{{ booking.id }}</td>
+                            <td><div style="font-weight: 600;">{{ booking.name }}</div><div style="color: var(--admin-text-muted); font-size: 11px;"><a href="tel:{{ booking.phone|phone_link }}" class="phone-link">{{ booking.phone }}</a></div></td>
+                            <td>{% for h in houses %}{% if h.id == booking.house_id %}{{ h.name }}{% endif %}{% endfor %}</td>
+                            <td>{{ booking.checkin }}</td>
+                            <td>{{ booking.checkout }}</td>
+                            <td><span class="status-badge status-{{ booking.status }}">{% if booking.status == 'new' %}Новое{% elif booking.status == 'confirmed' %}Подтверждено{% elif booking.status == 'cancelled' %}Отменено{% endif %}</span></td>
+                            <td><div class="table-actions">
+                                {% if booking.status == 'confirmed' %}
+                                <a href="/admin/booking/{{ booking.id }}/pdf" class="btn-table" target="_blank" title="Скачать PDF">📄</a>
+                                {% endif %}
+                                <button class="btn-table" onclick="updateStatus({{ booking.id }}, 'confirmed')">✓</button>
+                                <button class="btn-table danger" onclick="deleteBooking({{ booking.id }})">×</button>
+                            </div></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+            
+            {% if page == 'houses' or page == 'dashboard' %}
+            {% if page != 'dashboard' %}
+            <div class="admin-header">
+                <h1 class="admin-title">Дома</h1>
+                <button class="btn-add" onclick="showAddHouseModal()">+ Добавить дом</button>
+            </div>
+            {% endif %}
+            
+            <div class="cards-grid">
+                {% for house in houses %}
+                <div class="house-card-admin">
+                    <div class="house-card-image">
+                        {% if house.images and house.images[0] %}
+                        <img src="{% if house.images[0].startswith('http') %}{{ house.images[0] }}{% else %}/{{ house.images[0] }}{% endif %}" alt="{{ house.name }}">
+                        {% else %}
+                        <div style="height: 100%; display: flex; align-items: center; justify-content: center; color: var(--admin-text-muted);">Нет фото</div>
+                        {% endif %}
+                    </div>
+                    <div class="house-card-body">
+                        <div class="house-card-title">{{ house.name }}</div>
+                        <div class="house-card-price">{{ house.price }} ₽ <span style="font-size: 12px; color: var(--admin-text-muted);">/ ночь</span></div>
+                        <div class="house-card-meta"><span>👥 до {{ house.max_guests }}</span><span>⭐ {{ house.amenities|length }}</span></div>
+                        <div class="house-card-actions">
+                            <button class="btn-action" onclick="editHouse({{ house.id }})">Ред.</button>
+                            <button class="btn-action danger" onclick="deleteHouse({{ house.id }})">Удл.</button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            {% if page == 'reviews' %}
+            <div class="admin-header">
+                <h1 class="admin-title">Отзывы</h1>
+                <button class="btn-add" onclick="showAddReviewModal()">+ Добавить</button>
+            </div>
+            
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr><th>ID</th><th>Автор</th><th>Дом</th><th>Оценка</th><th>Текст</th><th>Действия</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for review in reviews %}
+                        <tr>
+                            <td>#{{ review.id }}</td>
+                            <td>{{ review.author }}</td>
+                            <td>{% for h in houses %}{% if h.id == review.house_id %}{{ h.name }}{% endif %}{% endfor %}</td>
+                            <td><span style="color: var(--admin-gold-dark);">{% for i in range(review.rating) %}★{% endfor %}</span></td>
+                            <td>{{ review.text[:40] }}...</td>
+                            <td><button class="btn-table danger" onclick="deleteReview({{ review.id }})">×</button></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+            
+            {% if page == 'calendar' %}
+            <div class="admin-header">
+                <h1 class="admin-title">Календарь</h1>
+                <select onchange="window.location.href='/admin/calendar/'+this.value" class="house-select-dropdown">
+                    {% for h in houses %}
+                    <option value="{{ h.id }}" {% if h.id == house.id %}selected{% endif %}>{{ h.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="admin-header" style="margin-top: -10px; margin-bottom: 20px;">
+                <span style="color: var(--admin-text-muted);">Дом: </span>
+                <strong>{{ house.name }}</strong>
+            </div>
+            
+            <div class="calendar-admin">
+                <div class="calendar-nav">
+                    <button class="calendar-nav-btn" onclick="changeMonth(-1)">← Пред.</button>
+                    <span id="calendar-month-year" style="font-size: 16px; font-weight: 600;"></span>
+                    <button class="calendar-nav-btn" onclick="changeMonth(1)">След. →</button>
+                </div>
+                <div class="calendar-grid" id="calendar-grid"></div>
+            </div>
+            
+            <!-- Price Management Section -->
+            <div class="price-management">
+                <h3>Управление ценами</h3>
+                <div class="price-form-row">
+                    <div class="form-group-admin">
+                        <label>Выберите дату</label>
+                        <input type="date" id="price-date-input">
+                    </div>
+                    <div class="form-group-admin">
+                        <label>Особая цена (₽)</label>
+                        <input type="number" id="price-value-input" placeholder="Базовая цена">
+                    </div>
+                    <button class="btn-action" onclick="setCustomPrice()">Установить цену</button>
+                </div>
+                <div class="price-info">
+                    <p>💡 Клик по дате в календаре = забронировать/освободить. Для установки особой цены используйте форму выше.</p>
+                </div>
+            </div>
+            {% endif %}
+            
+            {% if page == 'analytics' %}
+            <div class="admin-header">
+                <h1 class="admin-title">Аналитика</h1>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-icon green">📊</div><div class="stat-value">{{ total_bookings }}</div><div class="stat-label">Бронирований</div></div>
+                <div class="stat-card"><div class="stat-icon gold">💰</div><div class="stat-value">{{ total_revenue }} ₽</div><div class="stat-label">Выручка</div></div>
+                <div class="stat-card"><div class="stat-icon blue">📅</div><div class="stat-value">{{ total_days_booked }}</div><div class="stat-label">Дней занято</div></div>
+            </div>
+            
+            <h2 style="font-size: 16px; margin: 20px 0 14px;">Загруженность</h2>
+            {% for stat in house_stats %}
+            <div style="background: var(--admin-surface); border: 1px solid var(--admin-border); border-radius: 10px; padding: 14px; margin-bottom: 10px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span style="font-weight: 600;">{{ stat.name }}</span>
+                    <span style="color: var(--admin-accent); font-weight: 700;">{{ stat.load_percent }}%</span>
+                </div>
+                <div style="height: 6px; background: var(--admin-surface-2); border-radius: 3px; overflow: hidden;">
+                    <div style="height: 100%; width: {{ stat.load_percent }}%; background: var(--admin-accent); border-radius: 3px;"></div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+            
+            {% if page == 'settings' %}
+            <div class="admin-header">
+                <h1 class="admin-title">Настройки</h1>
+            </div>
+            
+            <div class="settings-section">
+                <div class="settings-title">⚙️ Основные</div>
+                <div class="form-group-admin"><label>Название</label><input type="text" value="SOTNUR"></div>
+                <div class="form-group-admin"><label>Описание</label><textarea>Дома в Марий Эл</textarea></div>
+            </div>
+            
+            <div class="settings-section">
+                <div class="settings-title">📞 Контакты</div>
+                <div class="form-group-admin"><label>Телефон</label><input type="text" value="+7 (937) 000-00-00"></div>
+                <div class="form-group-admin"><label>Email</label><input type="email" value="hello@sotnur.ru"></div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- CONFIRM MODAL -->
+    <div class="modal-admin" id="confirm-modal" style="display: none;">
+        <div class="modal-admin-content" style="max-width: 360px;">
+            <div class="modal-header">
+                <h2>Подтверждение</h2>
+                <button class="modal-close" onclick="closeConfirmModal()">×</button>
+            </div>
+            <div style="padding: 20px;">
+                <p id="confirm-message" style="margin-bottom: 20px; font-size: 15px;"></p>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-action" onclick="closeConfirmModal()" style="flex: 1;">Отмена</button>
+                    <button class="btn-action" id="confirm-ok-btn" style="flex: 1; background: var(--admin-danger); color: white;">Удалить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- PRICE MODAL FOR CALENDAR -->
+    <div class="modal-admin" id="price-modal" style="display: none;">
+        <div class="modal-admin-content" style="max-width: 360px;">
+            <div class="modal-header">
+                <h2>Особая цена на дату</h2>
+                <button class="modal-close" onclick="closePriceModal()">×</button>
+            </div>
+            <div style="padding: 20px;">
+                <p id="price-modal-date" style="color: var(--admin-text-muted); margin-bottom: 16px;"></p>
+                <div class="form-group-admin">
+                    <label>Цена (₽)</label>
+                    <input type="number" id="price-modal-input" placeholder="Оставьте пустым для базовой цены">
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 16px;">
+                    <button class="btn-action" onclick="closePriceModal()" style="flex: 1;">Отмена</button>
+                    <button class="btn-action" onclick="savePriceModal()" style="flex: 1; background: var(--admin-accent); color: white;">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MODAL: ADD/EDIT HOUSE -->
+    <div class="modal-admin" id="house-modal">
+        <div class="modal-admin-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Добавить дом</h2>
+                <button class="modal-close" onclick="closeHouseModal()">×</button>
+            </div>
+            <form id="house-form" method="POST" enctype="multipart/form-data">
+                <div class="form-group-admin">
+                    <label>Название</label>
+                    <input type="text" id="house-name" name="name" required placeholder="A-фрейм Сосновый">
+                </div>
+                <div class="form-group-admin">
+                    <label>Короткое описание</label>
+                    <input type="text" id="house-short-desc" name="short_desc" required placeholder="Уютный домик">
+                </div>
+                <div class="form-group-admin">
+                    <label>Полное описание</label>
+                    <textarea id="house-full-desc" name="full_desc" required placeholder="Подробное описание..."></textarea>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <div class="form-group-admin">
+                        <label>Цена ₽/ночь</label>
+                        <input type="number" id="house-price" name="price" required>
+                    </div>
+                    <div class="form-group-admin">
+                        <label>Гостей макс.</label>
+                        <input type="number" id="house-guests" name="max_guests" required>
+                    </div>
+                </div>
+                <div class="form-group-admin">
+                    <label>Удобства</label>
+                    <div class="checkbox-grid">
+                        <label class="checkbox-item"><input type="checkbox" name="amenities" value="wi-fi"> Wi-Fi</label>
+                        <label class="checkbox-item"><input type="checkbox" name="amenities" value="душ"> Душ</label>
+                        <label class="checkbox-item"><input type="checkbox" name="amenities" value="туалет"> Туалет</label>
+                        <label class="checkbox-item"><input type="checkbox" name="amenities" value="мангал"> Мангал</label>
+                        <label class="checkbox-item"><input type="checkbox" name="amenities" value="кухня"> Кухня</label>
+                        <label class="checkbox-item"><input type="checkbox" name="amenities" value="баня"> Баня</label>
+                        <label class="checkbox-item"><input type="checkbox" name="amenities" value="печь"> Печь</label>
+                        <label class="checkbox-item"><input type="checkbox" name="amenities" value="стоянка"> Стоянка</label>
+                        <label class="checkbox-item"><input type="checkbox" name="amenities" value="отопление"> Отопление</label>
+                    </div>
+                </div>
+                <div class="form-group-admin">
+                    <label>Фото (URL, по одному на строку)</label>
+                    <textarea id="house-image-urls" name="image_urls" rows="2" placeholder="https://example.com/photo.jpg"></textarea>
+                </div>
+                <div class="form-group-admin">
+                    <label>Или файлы</label>
+                    <input type="file" name="image_files" multiple accept="image/*" style="padding: 10px; background: var(--admin-surface-2); border: 1px solid var(--admin-border); border-radius: 8px; width: 100%;">
+                </div>
+                <button type="submit" class="btn-submit">Сохранить</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- MODAL: ADD REVIEW -->
+    <div class="modal-admin" id="review-modal">
+        <div class="modal-admin-content">
+            <div class="modal-header">
+                <h2>Добавить отзыв</h2>
+                <button class="modal-close" onclick="closeReviewModal()">×</button>
+            </div>
+            <form action="/admin/review/add" method="POST">
+                <div class="form-group-admin">
+                    <label>Дом</label>
+                    <select name="house_id" required>
+                        {% for house in houses %}
+                        <option value="{{ house.id }}">{{ house.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group-admin">
+                    <label>Автор</label>
+                    <input type="text" name="author" required>
+                </div>
+                <div class="form-group-admin">
+                    <label>Оценка</label>
+                    <select name="rating" required>
+                        <option value="5">★★★★★ (5)</option>
+                        <option value="4">★★★★☆ (4)</option>
+                        <option value="3">★★★☆☆ (3)</option>
+                    </select>
+                </div>
+                <div class="form-group-admin">
+                    <label>Текст</label>
+                    <textarea name="text" required></textarea>
+                </div>
+                <button type="submit" class="btn-submit">Добавить</button>
+            </form>
+        </div>
+    </div>
+    
+    {% else %}
+    <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--admin-bg);">
+        <p>Пожалуйста, <a href="/login" style="color: var(--admin-accent);">войдите</a>.</p>
+    </div>
+    {% endif %}
+    
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+    
+    {% if page == 'calendar' %}
+    <script>
+    const houseCalendar = {{ house.calendar | tojson | safe }};
+    let currentMonth = new Date().getMonth();
+    let currentYear = new Date().getFullYear();
+    const houseId = {{ house.id }};
+    
+    function renderCalendar() {
+        const grid = document.getElementById('calendar-grid');
+        const monthYear = document.getElementById('calendar-month-year');
+        const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+        
+        monthYear.textContent = monthNames[currentMonth] + ' ' + currentYear;
+        
+        const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+        const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+        
+        let html = '';
+        ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'].forEach(d => html += '<div class="calendar-day-header">' + d + '</div>');
+        for (let i = 1; i < firstDay; i++) html += '<div></div>';
+        
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dateStr = currentYear + '-' + String(currentMonth + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
+            const dateData = houseCalendar[dateStr];
+            const isBooked = dateData === 'booked' || (dateData && dateData.status === 'booked');
+            const hasCustomPrice = dateData && dateData.price;
+            const priceDisplay = hasCustomPrice ? '<div class="cal-price">' + dateData.price + '₽</div>' : '';
+            html += '<div class="calendar-day-admin ' + (isBooked ? 'booked' : 'free') + (hasCustomPrice ? ' custom-price' : '') + '" onclick="toggleDate(\'' + dateStr + '\')">' + day + priceDisplay + '</div>';
+        }
+        
+        grid.innerHTML = html;
+    }
+    
+    function changeMonth(delta) { currentMonth += delta; if (currentMonth > 11) { currentMonth = 0; currentYear++; } if (currentMonth < 0) { currentMonth = 11; currentYear--; } renderCalendar(); }
+    
+    var priceModalDate = null;
+    
+    function openPriceModal(dateStr) {
+        priceModalDate = dateStr;
+        const existing = houseCalendar[dateStr];
+        const currentPrice = existing && existing.price ? existing.price : '';
+        const dateObj = new Date(dateStr);
+        const months = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+        document.getElementById('price-modal-date').textContent = dateObj.getDate() + ' ' + months[dateObj.getMonth()] + ' ' + dateObj.getFullYear();
+        document.getElementById('price-modal-input').value = currentPrice;
+        document.getElementById('price-modal').style.display = 'flex';
+    }
+    
+    function closePriceModal() {
+        document.getElementById('price-modal').style.display = 'none';
+        priceModalDate = null;
+    }
+    
+    async function savePriceModal() {
+        if (!priceModalDate) return;
+        
+        const input = document.getElementById('price-modal-input');
+        const price = input.value.trim() ? parseInt(input.value.trim()) : null;
+        
+        await fetch('/admin/calendar/' + houseId + '/update', { 
+            method: 'POST', 
+            headers: {'Content-Type': 'application/json'}, 
+            body: JSON.stringify({date: priceModalDate, status: 'booked', price: price})
+        });
+        
+        if (price) {
+            houseCalendar[priceModalDate] = {status: 'booked', price: price};
+        } else {
+            houseCalendar[priceModalDate] = 'booked';
+        }
+        
+        closePriceModal();
+        renderCalendar();
+    }
+    
+    async function setCustomPrice() {
+        const dateStr = document.getElementById('price-date-input').value;
+        const price = document.getElementById('price-value-input').value.trim() ? parseInt(document.getElementById('price-value-input').value.trim()) : null;
+        
+        if (!dateStr) {
+            showToast('Выберите дату', 'error');
+            return;
+        }
+        
+        await fetch('/admin/calendar/' + houseId + '/update', { 
+            method: 'POST', 
+            headers: {'Content-Type': 'application/json'}, 
+            body: JSON.stringify({date: dateStr, status: 'booked', price: price})
+        });
+        
+        if (price) {
+            houseCalendar[dateStr] = {status: 'booked', price: price};
+            showToast(`Цена ${price}₽ установлена на ${dateStr}`, 'success');
+        } else {
+            houseCalendar[dateStr] = 'booked';
+            showToast(`Дата ${dateStr} забронирована по базовой цене`, 'success');
+        }
+        
+        renderCalendar();
+        document.getElementById('price-date-input').value = '';
+        document.getElementById('price-value-input').value = '';
+    }
+    
+    async function toggleDate(dateStr) {
+        const existing = houseCalendar[dateStr];
+        const isBooked = existing === 'booked' || (existing && existing.status === 'booked');
+        
+        // Клик меняет статус: занято <-> свободно
+        await fetch('/admin/calendar/' + houseId + '/update', { 
+            method: 'POST', 
+            headers: {'Content-Type': 'application/json'}, 
+            body: JSON.stringify({date: dateStr, status: isBooked ? 'free' : 'booked'})
+        });
+        
+        if (isBooked) {
+            delete houseCalendar[dateStr];
+        } else {
+            houseCalendar[dateStr] = 'booked';
+        }
+        renderCalendar();
+    }
+    
+    renderCalendar();
+    </script>
+    {% endif %}
+    
+    <script>
+    function showAddHouseModal() {
+        document.getElementById('house-modal').classList.add('show');
+        document.getElementById('modal-title').textContent = 'Добавить дом';
+        document.getElementById('house-form').action = '/admin/house/add';
+    }
+    
+    function editHouse(id) {
+        const houses = {{ houses | tojson | safe }};
+        const house = houses.find(h => h.id === id);
+        if (house) {
+            document.getElementById('house-modal').classList.add('show');
+            document.getElementById('modal-title').textContent = 'Редактировать';
+            document.getElementById('house-form').action = '/admin/house/' + id + '/edit';
+            document.getElementById('house-name').value = house.name;
+            document.getElementById('house-short-desc').value = house.short_desc;
+            document.getElementById('house-full-desc').value = house.full_desc;
+            document.getElementById('house-price').value = house.price;
+            document.getElementById('house-guests').value = house.max_guests;
+            document.querySelectorAll('#house-form input[name="amenities"]').forEach(cb => cb.checked = house.amenities.includes(cb.value));
+        }
+    }
+    
+    function closeHouseModal() { document.getElementById('house-modal').classList.remove('show'); }
+    
+    // Toast уведомления
+    var confirmCallback = null;
+    
+    function showConfirmModal(message, callback) {
+        document.getElementById('confirm-message').textContent = message;
+        confirmCallback = callback;
+        document.getElementById('confirm-modal').style.display = 'flex';
+        document.getElementById('confirm-ok-btn').onclick = function() {
+            var cb = confirmCallback;
+            closeConfirmModal();
+            if (cb) cb();
+        };
+    }
+    
+    function closeConfirmModal() {
+        document.getElementById('confirm-modal').style.display = 'none';
+        confirmCallback = null;
+    }
+    
+    function showToast(message, type = 'success') {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.className = 'toast ' + type;
+        toast.innerHTML = '<span>' + (type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ') + '</span>' + message;
+        container.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.classList.add('hiding');
+            setTimeout(() => toast.remove(), 300);
+        }, 3000);
+    }
+    
+    function deleteHouse(id) { 
+        showConfirmModal('Вы уверены, что хотите удалить дом?', function() {
+            fetch('/admin/house/' + id + '/delete', {method: 'POST'}).then(() => {
+                showToast('Дом удален', 'success');
+                setTimeout(() => location.reload(), 500);
+            }).catch(() => showToast('Ошибка удаления', 'error')); 
+        });
+    }
+    
+    async function updateStatus(id, status) { 
+        try {
+            await fetch('/admin/booking/' + id + '/status', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({status: status})
+            });
+            showToast('Статус обновлен', 'success');
+            setTimeout(() => location.reload(), 500);
+        } catch(e) {
+            showToast('Ошибка: ' + e, 'error');
+        }
+    }
+    
+    function deleteBooking(id) { 
+        showConfirmModal('Вы уверены, что хотите удалить бронирование?', function() {
+            fetch('/admin/booking/' + id + '/delete', {method: 'POST'}).then(() => {
+                showToast('Бронирование удалено', 'success');
+                setTimeout(() => location.reload(), 500);
+            }).catch(() => showToast('Ошибка удаления', 'error')); 
+        });
+    }
+    
+    function showAddReviewModal() { document.getElementById('review-modal').classList.add('show'); }
+    function closeReviewModal() { document.getElementById('review-modal').classList.remove('show'); }
+    
+    function deleteReview(id) { 
+        showConfirmModal('Вы уверены, что хотите удалить отзыв?', function() {
+            fetch('/admin/review/' + id + '/delete', {method: 'POST'}).then(() => {
+                showToast('Отзыв удален', 'success');
+                setTimeout(() => location.reload(), 500);
+            }).catch(() => showToast('Ошибка удаления', 'error')); 
+        });
+    }
+    
+    function toggleMobileMenu() {
+        document.querySelector('.admin-sidebar').classList.toggle('open');
+        document.querySelector('.admin-sidebar-overlay').classList.toggle('show');
+    }
+    
+    // Welcome banner - show only once with localStorage
+    function closeWelcome() {
+        document.getElementById('welcome-banner').classList.add('hidden');
+        localStorage.setItem('sotnur_welcome_shown', '1');
+    }
+    
+    // Show welcome only first time, auto-hide after 3 seconds
+    if (!localStorage.getItem('sotnur_welcome_shown')) {
+        setTimeout(() => {
+            var banner = document.getElementById('welcome-banner');
+            if (banner) {
+                banner.classList.remove('hidden');
+                setTimeout(() => {
+                    banner.classList.add('hidden');
+                    localStorage.setItem('sotnur_welcome_shown', '1');
+                }, 3000);
+            }
+        }, 500);
+    }
+    </script>
+</body>
+</html>
