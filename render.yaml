@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: sotnur
+    runtime: python
+    repo: https://github.com/maxxmoto/sotnur
+    branch: master
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+    plan: free
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: PYTHON_VERSION
+        value: "3.11.0"
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_CHAT_ID
+        sync: false
+      - key: EMAIL_PASSWORD
+        sync: false
