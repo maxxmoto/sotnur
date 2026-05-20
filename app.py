@@ -495,8 +495,17 @@ def book():
         house_name = house.get('name', 'Неизвестный дом') if house else 'Неизвестный дом'
         
         # Telegram
-        telegram_message = f"🔔 Новая заявка на бронирование!\n\n🏠 Дом: {house_name}\n👤 Имя: {name}\n📱 Телефон: {phone}\n📅 Заезд: {checkin}\n📅 Выезд: {checkout}"
-        send_telegram_notification(telegram_message, TELEGRAM_CHAT_ID)
+        telegram_message = (
+            f"🔔 НОВАЯ ЗАЯВКА НА БРОНИРОВАНИЕ\n"
+            f"\n🏠 Дом: {house_name}"
+            f"\n👤 Имя: {name}"
+            f"\n📱 Телефон: {phone}"
+            f"\n📅 Заезд: {checkin}"
+            f"\n📅 Выезд: {checkout}"
+            f"\n\n🌐 {request.host_url}"
+        )
+        if TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
+            send_telegram_notification(telegram_message, TELEGRAM_CHAT_ID)
         
         # Email
         email_subject = f"Новая заявка на бронирование - {house_name}"
