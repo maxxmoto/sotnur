@@ -144,14 +144,15 @@ def save_data(data):
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
-def seed_default_houses():
-    """Создаёт тестовые дома при первом запуске (если база пуста)"""
-    data = load_data()
-    if data.get('houses'):
+def seed_default_data():
+    """Создаёт тестовые дома + админа при первом запуске (если база пуста)"""
+    import os
+    if os.path.exists(DATA_FILE):
         return
-    default_houses = [
+    data = {"houses": [], "reviews": [], "bookings": [], "users": []}
+    data['houses'] = [
         {
-            "id": 1,
+            "id": 9,
             "name": "Сосновый бор",
             "short_desc": "Уютный дом в сосновом лесу",
             "description": "Дом в тихом месте, окружённый соснами. Идеально для семейного отдыха.",
@@ -162,7 +163,7 @@ def seed_default_houses():
             "calendar": {}
         },
         {
-            "id": 2,
+            "id": 10,
             "name": "Дом на берегу озера",
             "short_desc": "Дом с видом на озеро",
             "description": "Просторный дом прямо у воды. Своя купель и баня.",
@@ -171,9 +172,31 @@ def seed_default_houses():
             "images": ["https://images.unsplash.com/photo-1449157291145-7efd050a4d0e?w=600"],
             "amenities": ["Баня", "Мангал", "Купель", "Wi-Fi", "Лодка"],
             "calendar": {}
+        },
+        {
+            "id": 11,
+            "name": "Шале «На рассвете»",
+            "short_desc": "Большой дом для компании",
+            "description": "Просторный дом с двумя спальнями, большой гостиной и верандой.",
+            "price": 15000,
+            "max_guests": 8,
+            "images": ["https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600"],
+            "amenities": ["Баня", "Мангал", "Купель", "Wi-Fi", "Камин"],
+            "calendar": {}
+        },
+        {
+            "id": 12,
+            "name": "Sanchezz 200 Pro",
+            "short_desc": "Премиальный дом",
+            "description": "Элитный дом с панорамными окнами, сауной и бассейном.",
+            "price": 25000,
+            "max_guests": 10,
+            "images": ["https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600"],
+            "amenities": ["Баня", "Мангал", "Сауна", "Wi-Fi", "Бассейн", "Купель"],
+            "calendar": {}
         }
     ]
-    data['houses'] = default_houses
+    data['users'] = [{"login": "admin", "password": "sotnur2026"}]
     save_data(data)
 
 
@@ -1301,14 +1324,14 @@ def api_stats():
 
 # ==================== ЗАПУСК ПРИЛОЖЕНИЯ ====================
 
+# Seed database on first run (должен быть после app, на уровне модуля для gunicorn)
+seed_default_data()
+
+# Создаём директорию для загрузок если нет
+if not os.path.exists(UPLOADS_DIR):
+    os.makedirs(UPLOADS_DIR)
+
 if __name__ == '__main__':
-    # Создаём директорию для загрузок если нет
-    if not os.path.exists(UPLOADS_DIR):
-        os.makedirs(UPLOADS_DIR)
-    
-    # Создаём тестовые дома при первом запуске
-    seed_default_houses()
-    
     print("=" * 50)
     print("SOTNUR - Server started!")
     print("Site: http://127.0.0.1:5000")
