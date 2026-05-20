@@ -144,60 +144,114 @@ def save_data(data):
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
+DEFAULT_HOUSES = [
+    {
+        "id": 8,
+        "name": "Дубовая роща",
+        "short_desc": "Тихий дом в окружении дубов",
+        "full_desc": "Дом расположен в живописной дубовой роще. Внутри — деревянная отделка, камин и большая терраса с видом на лес. Идеальное место для уединённого отдыха.",
+        "price": 7000,
+        "max_guests": 4,
+        "images": ["https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=600"],
+        "amenities": ["Баня", "Мангал", "Камин", "Wi-Fi"],
+        "calendar": {}
+    },
+    {
+        "id": 9,
+        "name": "Сосновый бор",
+        "short_desc": "Уютный дом в сосновом лесу",
+        "full_desc": "Дом в тихом месте, окружённый соснами. Идеально для семейного отдыха. Рядом лесные тропы и озеро.",
+        "price": 8000,
+        "max_guests": 4,
+        "images": ["https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600"],
+        "amenities": ["Баня", "Мангал", "Купель", "Wi-Fi"],
+        "calendar": {}
+    },
+    {
+        "id": 10,
+        "name": "Берёзовая заводь",
+        "short_desc": "Дом с видом на озеро",
+        "full_desc": "Просторный дом прямо у воды. Своя купель и баня. Летом можно рыбачить и кататься на лодке.",
+        "price": 12000,
+        "max_guests": 6,
+        "images": ["https://images.unsplash.com/photo-1449157291145-7efd050a4d0e?w=600"],
+        "amenities": ["Баня", "Мангал", "Купель", "Wi-Fi", "Лодка"],
+        "calendar": {}
+    },
+    {
+        "id": 11,
+        "name": "Шале «На рассвете»",
+        "short_desc": "Большой дом для компании",
+        "full_desc": "Просторный дом с двумя спальнями, большой гостиной и верандой. Восходы над лесом — главное украшение этого места.",
+        "price": 15000,
+        "max_guests": 8,
+        "images": ["https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600"],
+        "amenities": ["Баня", "Мангал", "Купель", "Wi-Fi", "Камин"],
+        "calendar": {}
+    },
+    {
+        "id": 12,
+        "name": "Кленовый хутор",
+        "short_desc": "Премиальный дом с панорамой",
+        "full_desc": "Элитный дом с панорамными окнами, сауной и бассейном. Подходит для больших компаний и семейных праздников.",
+        "price": 25000,
+        "max_guests": 10,
+        "images": ["https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600"],
+        "amenities": ["Баня", "Мангал", "Сауна", "Wi-Fi", "Бассейн", "Купель"],
+        "calendar": {}
+    },
+    {
+        "id": 13,
+        "name": "Лесная поляна",
+        "short_desc": "Уютный домик для двоих",
+        "full_desc": "Небольшой романтичный домик на краю леса. Есть открытая купель под звёздами и мангальная зона.",
+        "price": 6000,
+        "max_guests": 2,
+        "images": ["https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600"],
+        "amenities": ["Купель", "Мангал", "Wi-Fi"],
+        "calendar": {}
+    },
+    {
+        "id": 14,
+        "name": "Озерный причал",
+        "short_desc": "Дом с собственной купелью",
+        "full_desc": "Дом прямо у озера с собственным причалом и купелью на дровах. Лодка и рыболовные снасти входят в стоимость.",
+        "price": 10000,
+        "max_guests": 5,
+        "images": ["https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600"],
+        "amenities": ["Баня", "Купель", "Лодка", "Мангал", "Wi-Fi"],
+        "calendar": {}
+    }
+]
+
 def seed_default_data():
     """Создаёт тестовые дома + админа при первом запуске (если база пуста)"""
     import os
     if os.path.exists(DATA_FILE):
         return
     data = {"houses": [], "reviews": [], "bookings": [], "users": []}
-    data['houses'] = [
-        {
-            "id": 9,
-            "name": "Сосновый бор",
-            "short_desc": "Уютный дом в сосновом лесу",
-            "description": "Дом в тихом месте, окружённый соснами. Идеально для семейного отдыха.",
-            "price": 8000,
-            "max_guests": 4,
-            "images": ["https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600"],
-            "amenities": ["Баня", "Мангал", "Купель", "Wi-Fi"],
-            "calendar": {}
-        },
-        {
-            "id": 10,
-            "name": "Дом на берегу озера",
-            "short_desc": "Дом с видом на озеро",
-            "description": "Просторный дом прямо у воды. Своя купель и баня.",
-            "price": 12000,
-            "max_guests": 6,
-            "images": ["https://images.unsplash.com/photo-1449157291145-7efd050a4d0e?w=600"],
-            "amenities": ["Баня", "Мангал", "Купель", "Wi-Fi", "Лодка"],
-            "calendar": {}
-        },
-        {
-            "id": 11,
-            "name": "Шале «На рассвете»",
-            "short_desc": "Большой дом для компании",
-            "description": "Просторный дом с двумя спальнями, большой гостиной и верандой.",
-            "price": 15000,
-            "max_guests": 8,
-            "images": ["https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600"],
-            "amenities": ["Баня", "Мангал", "Купель", "Wi-Fi", "Камин"],
-            "calendar": {}
-        },
-        {
-            "id": 12,
-            "name": "Sanchezz 200 Pro",
-            "short_desc": "Премиальный дом",
-            "description": "Элитный дом с панорамными окнами, сауной и бассейном.",
-            "price": 25000,
-            "max_guests": 10,
-            "images": ["https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600"],
-            "amenities": ["Баня", "Мангал", "Сауна", "Wi-Fi", "Бассейн", "Купель"],
-            "calendar": {}
-        }
-    ]
+    data['houses'] = DEFAULT_HOUSES
     data['users'] = [{"login": "admin", "password": "sotnur2026"}]
     save_data(data)
+
+
+def migrate_missing_houses():
+    """Добавляет недостающие дома в существующую базу"""
+    import os
+    if not os.path.exists(DATA_FILE):
+        return
+    try:
+        data = load_data()
+        existing_ids = {h['id'] for h in data.get('houses', [])}
+        new_houses = []
+        for h in DEFAULT_HOUSES:
+            if h['id'] not in existing_ids:
+                new_houses.append(h)
+        if new_houses:
+            data.setdefault('houses', []).extend(new_houses)
+            save_data(data)
+    except Exception:
+        pass
 
 
 def get_house(house_id):
@@ -783,7 +837,7 @@ def admin_house_delete(house_id):
 def admin_upload_images(house_id):
     """Загрузка изображений для дома"""
     if not session.get('logged_in'):
-        return jsonify({'error': 'Unauthorized'}, status=401)
+        return jsonify({'error': 'Unauthorized'}), 401
     
     if 'images' not in request.files:
         return jsonify({'error': 'No files provided'}, status=400)
@@ -818,7 +872,7 @@ def admin_upload_images(house_id):
 def admin_delete_image(house_id):
     """Удаление изображения дома"""
     if not session.get('logged_in'):
-        return jsonify({'error': 'Unauthorized'}, status=401)
+        return jsonify({'error': 'Unauthorized'}), 401
     
     image_url = request.json.get('image_url', '')
     
@@ -836,7 +890,7 @@ def admin_delete_image(house_id):
 def admin_reorder_images(house_id):
     """Изменение порядка изображений"""
     if not session.get('logged_in'):
-        return jsonify({'error': 'Unauthorized'}, status=401)
+        return jsonify({'error': 'Unauthorized'}), 401
     
     new_order = request.json.get('order', [])
     
@@ -873,7 +927,7 @@ def admin_calendar(house_id):
 def admin_calendar_update(house_id):
     """Обновление статуса даты в календаре"""
     if not session.get('logged_in'):
-        return jsonify({'error': 'Unauthorized'}, status=401)
+        return jsonify({'error': 'Unauthorized'}), 401
     
     date_str = request.json.get('date', '')
     status = request.json.get('status', 'free')
@@ -908,7 +962,7 @@ def admin_calendar_update(house_id):
 def admin_booking_status(booking_id):
     """Изменение статуса брони — синхронизирует календарь"""
     if not session.get('logged_in'):
-        return jsonify({'error': 'Unauthorized'}, status=401)
+        return jsonify({'error': 'Unauthorized'}), 401
     
     new_status = request.json.get('status', 'new')
     
@@ -1296,7 +1350,7 @@ def uploaded_file(filename):
 def api_stats():
     """API для получения общей статистики"""
     if not session.get('logged_in'):
-        return jsonify({'error': 'Unauthorized'}, status=401)
+        return jsonify({'error': 'Unauthorized'}), 401
     
     data = load_data()
     houses = data.get('houses', [])
@@ -1333,8 +1387,9 @@ def api_stats():
 
 # ==================== ЗАПУСК ПРИЛОЖЕНИЯ ====================
 
-# Seed database on first run (должен быть после app, на уровне модуля для gunicorn)
+# Seed database on first run + миграция новых домов
 seed_default_data()
+migrate_missing_houses()
 
 # Создаём директорию для загрузок если нет
 if not os.path.exists(UPLOADS_DIR):

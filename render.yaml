@@ -12,9 +12,5 @@ services:
         generateValue: true
       - key: PYTHON_VERSION
         value: "3.11.0"
-      - key: TELEGRAM_BOT_TOKEN
-        value: "8687324068:AAFRwXnlIu_WNB6qfTMtetG0idyVsRxk5vM"
-      - key: TELEGRAM_CHAT_ID
-        value: "903104535"
       - key: EMAIL_PASSWORD
         sync: false

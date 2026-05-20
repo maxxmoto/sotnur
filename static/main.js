@@ -224,8 +224,7 @@ function initHouseCalendar() {
     const calendarDays = document.getElementById('calendar-days');
     if (!calendarDays) return;
     
-    // Данные из Python (передаются через Jinja)
-    const bookedDates = typeof bookedDates !== 'undefined' ? bookedDates : {};
+    const houseCalendarDates = typeof bookedDates !== 'undefined' ? bookedDates : {};
     const houseIdGlobal = typeof houseId !== 'undefined' ? houseId : null;
     
     let currentMonth = new Date().getMonth();
@@ -268,8 +267,7 @@ function initHouseCalendar() {
                 classes += ' disabled';
             }
             
-            // Проверка занятости
-            if (bookedDates[dateStr] === 'booked' || (bookedDates[dateStr] && bookedDates[dateStr].status === 'booked')) {
+            if (houseCalendarDates[dateStr] === 'booked' || (houseCalendarDates[dateStr] && houseCalendarDates[dateStr].status === 'booked')) {
                 classes += ' booked';
             }
             
