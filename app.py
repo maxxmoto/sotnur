@@ -277,7 +277,7 @@ def get_available_dates(house_id):
                 cin = datetime.strptime(b['checkin'], '%Y-%m-%d')
                 cout = datetime.strptime(b['checkout'], '%Y-%m-%d')
                 cur = cin
-                while cur < cout:
+                while cur <= cout:
                     ds = cur.strftime('%Y-%m-%d')
                     if ds not in dates:
                         dates[ds] = 'booked'
@@ -327,7 +327,7 @@ def is_date_booked(house_id, date_str):
                 cin = datetime.strptime(b['checkin'], '%Y-%m-%d')
                 cout = datetime.strptime(b['checkout'], '%Y-%m-%d')
                 cur = cin
-                while cur < cout:
+                while cur <= cout:
                     if cur.strftime('%Y-%m-%d') == date_str:
                         return True
                     cur += timedelta(days=1)
@@ -369,7 +369,7 @@ def index():
                 # Проверяем каждую дату в диапазоне
                 available = True
                 current = checkin_date
-                while current < checkout_date:
+                while current <= checkout_date:
                     date_str = current.strftime('%Y-%m-%d')
                     if is_date_booked(h['id'], date_str):
                         available = False
@@ -415,7 +415,7 @@ def index():
                 cin = datetime.strptime(b['checkin'], '%Y-%m-%d')
                 cout = datetime.strptime(b['checkout'], '%Y-%m-%d')
                 cur = cin
-                while cur < cout:
+                while cur <= cout:
                     booked_set.add(cur.strftime('%Y-%m-%d'))
                     cur += timedelta(days=1)
             except (ValueError, KeyError):
@@ -464,7 +464,7 @@ def check_date_overlap(house_id, checkin, checkout):
         checkin_date = datetime.strptime(checkin, '%Y-%m-%d')
         checkout_date = datetime.strptime(checkout, '%Y-%m-%d')
         current = checkin_date
-        while current < checkout_date:
+        while current <= checkout_date:
             date_str = current.strftime('%Y-%m-%d')
             if is_date_booked(house_id, date_str):
                 occupied_dates.append(date_str)
@@ -533,7 +533,7 @@ def book():
             cin = datetime.strptime(checkin, '%Y-%m-%d')
             cout = datetime.strptime(checkout, '%Y-%m-%d')
             cur = cin
-            while cur < cout:
+            while cur <= cout:
                 ds = cur.strftime('%Y-%m-%d')
                 if ds not in cal:
                     cal[ds] = 'booked'
@@ -987,13 +987,11 @@ def admin_booking_status(booking_id):
                 cin = datetime.strptime(booking['checkin'], '%Y-%m-%d')
                 cout = datetime.strptime(booking['checkout'], '%Y-%m-%d')
                 cur = cin
-                while cur < cout:
+                while cur <= cout:
                     ds = cur.strftime('%Y-%m-%d')
                     if new_status == 'cancelled':
-                        # Удаляем даты из календаря при отмене
                         cal.pop(ds, None)
                     elif new_status in ('confirmed', 'new'):
-                        # Добавляем даты при подтверждении
                         if ds not in cal:
                             cal[ds] = 'booked'
                     cur += timedelta(days=1)
@@ -1022,7 +1020,7 @@ def admin_booking_delete(booking_id):
                 cin = datetime.strptime(booking['checkin'], '%Y-%m-%d')
                 cout = datetime.strptime(booking['checkout'], '%Y-%m-%d')
                 cur = cin
-                while cur < cout:
+                while cur <= cout:
                     ds = cur.strftime('%Y-%m-%d')
                     cal.pop(ds, None)
                     cur += timedelta(days=1)

@@ -869,21 +869,21 @@ body {
         grid-template-columns: repeat(2, 1fr);
     }
 
-    .data-table {
+    .admin-table, .data-table {
         display: block;
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
     }
 
-    .data-table thead {
+    .admin-table thead, .data-table thead {
         display: none;
     }
 
-    .data-table tbody {
+    .admin-table tbody, .data-table tbody {
         display: block;
     }
 
-    .data-table tr {
+    .admin-table tr, .data-table tr {
         display: block;
         background: var(--admin-surface);
         border-radius: 10px;
@@ -892,14 +892,14 @@ body {
         box-shadow: var(--admin-shadow);
     }
 
-    .data-table td {
+    .admin-table td, .data-table td {
         display: flex;
         justify-content: space-between;
         padding: 8px 0;
         border-bottom: 1px solid var(--admin-border);
     }
 
-    .data-table td::before {
+    .admin-table td::before, .data-table td::before {
         content: attr(data-label);
         font-weight: 600;
         color: var(--admin-text-muted);
@@ -907,7 +907,7 @@ body {
         text-transform: uppercase;
     }
 
-    .data-table td:last-child {
+    .admin-table td:last-child, .data-table td:last-child {
         border-bottom: none;
         justify-content: flex-end;
     }

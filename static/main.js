@@ -18,13 +18,19 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     /* ---------- Мобильное меню ---------- */
-    const menuToggle = document.getElementById('menu-toggle');
-    const nav = document.getElementById('nav');
+    var menuToggle = document.getElementById('menu-toggle');
+    var nav = document.getElementById('nav');
     
     if (menuToggle && nav) {
         menuToggle.addEventListener('click', function() {
             nav.classList.toggle('active');
             menuToggle.classList.toggle('active');
+        });
+        nav.querySelectorAll('.nav-link').forEach(function(link) {
+            link.addEventListener('click', function() {
+                nav.classList.remove('active');
+                menuToggle.classList.remove('active');
+            });
         });
     }
     
@@ -33,9 +39,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     /* ---------- Модальное окно быстрого бронирования ---------- */
     initQuickBookModal();
-    
-    /* ---------- Календарь на странице дома ---------- */
-    initHouseCalendar();
     
     /* ---------- Галерея на странице дома ---------- */
     initGallery();
@@ -136,10 +139,9 @@ function initCarousels() {
             }
         }
         
-        // Автопереключение каждые 6 секунд (менее навязчиво)
         setInterval(function() {
             showImage(currentIndex + 1);
-        }, 6000);
+        }, 10000);
     });
 }
 

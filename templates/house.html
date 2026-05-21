@@ -121,23 +121,6 @@
                 <div class="booking-card glass">
                     <h3 class="booking-title">Забронировать</h3>
                     
-                    <!-- Календарь занятости -->
-                    <div class="booking-calendar">
-                        <div class="calendar-header">
-                            <button class="calendar-nav" id="prev-month" aria-label="Предыдущий месяц">❮</button>
-                            <span id="calendar-month-year"></span>
-                            <button class="calendar-nav" id="next-month" aria-label="Следующий месяц">❯</button>
-                        </div>
-                        <div class="calendar-weekdays">
-                            <span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span>
-                        </div>
-                        <div class="calendar-days" id="calendar-days"></div>
-                        <div class="calendar-legend">
-                            <span class="legend-item"><span class="legend-color free"></span> Свободно</span>
-                            <span class="legend-item"><span class="legend-color booked"></span> Занято</span>
-                        </div>
-                    </div>
-                    
                     <form method="POST" action="/book" class="booking-form-detail">
                         <input type="hidden" name="house_id" value="{{ house.id }}">
                         <div class="form-group">
@@ -423,8 +406,19 @@ function galleryGoTo(index) {
     if (thumbs[galleryCurrentSlide]) thumbs[galleryCurrentSlide].classList.add('active');
 }
 
-// Auto slide
-setInterval(function() { gallerySlide(1); }, 5000);
+// Touch swipe for gallery
+(function() {
+    var carousel = document.querySelector('.gallery-carousel');
+    if (!carousel || document.querySelectorAll('.gallery-img').length <= 1) return;
+    var startX = 0;
+    carousel.addEventListener('touchstart', function(e) { startX = e.changedTouches[0].screenX; }, {passive: true});
+    carousel.addEventListener('touchend', function(e) {
+        var diff = startX - e.changedTouches[0].screenX;
+        if (Math.abs(diff) > 50) gallerySlide(diff > 0 ? 1 : -1);
+    }, {passive: true});
+})();
+
+setInterval(function() { gallerySlide(1); }, 8000);
 
 // Share button
 function shareHouse() {
