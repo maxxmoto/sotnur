@@ -328,7 +328,11 @@ DEFAULT_HOUSES = [
         "full_desc": "Дом расположен в живописной дубовой роще. Внутри — деревянная отделка, камин и большая терраса с видом на лес. Идеальное место для уединённого отдыха.",
         "price": 5000,
         "max_guests": 4,
-        "images": [],
+        "images": [
+            "https://images.unsplash.com/photo-1518780664697-55e3ad937233?w=600&q=80",
+            "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&q=80",
+            "https://images.unsplash.com/photo-1568605114967-8130f3a36994?w=600&q=80"
+        ],
         "amenities": ["wi-fi", "камин", "терраса", "парковка"],
         "calendar": {}
     },
@@ -339,7 +343,11 @@ DEFAULT_HOUSES = [
         "full_desc": "Светлый дом в окружении берёз. Рядом озеро и лесные тропы. Есть мангальная зона, баня и Wi-Fi. Подходит для семейного отдыха.",
         "price": 6500,
         "max_guests": 6,
-        "images": [],
+        "images": [
+            "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&q=80",
+            "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=600&q=80",
+            "https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?w=600&q=80"
+        ],
         "amenities": ["wi-fi", "баня", "мангал", "парковка", "кухня"],
         "calendar": {}
     },

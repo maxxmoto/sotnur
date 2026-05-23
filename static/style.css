@@ -155,14 +155,14 @@ img {
 
 .logo-text {
     color: var(--primary-dark);
-    font-size: 15px;
+    font-size: 18px;
     font-weight: 500;
     letter-spacing: 0.3px;
     line-height: 1.15;
 }
 
 .logo-text strong {
-    font-size: 22px;
+    font-size: 28px;
     font-weight: 800;
     letter-spacing: 0.5px;
     display: block;
@@ -171,10 +171,10 @@ img {
 
 @media (max-width: 767px) {
     .logo-text {
-        font-size: 13px;
+        font-size: 15px;
     }
     .logo-text strong {
-        font-size: 18px;
+        font-size: 22px;
     }
 }
 
