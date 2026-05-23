@@ -28,6 +28,7 @@ except ImportError:
 # PostgreSQL (через Supabase) на Render, JSON локально
 DATABASE_URL = os.environ.get('DATABASE_URL', '')
 USE_DB = bool(DATABASE_URL)
+DB_ERROR = None  # хранит последнюю ошибку подключения
 
 if USE_DB:
     from flask_sqlalchemy import SQLAlchemy
@@ -103,8 +104,11 @@ if USE_DB:
                     db.session.add(UserModel(login='admin', password='sotnur2026'))
                     db.session.commit()
         except Exception as e:
+            global USE_DB, load_data, save_data, DB_ERROR
             import traceback
-            print(f"[WARN] PostgreSQL не подключена: {e}")
+            msg = str(e)
+            DB_ERROR = f"SQLAlchemy: {msg}"
+            print(f"[WARN] PostgreSQL не подключена: {msg}")
             traceback.print_exc()
             # Fallback: пробуем прямое psycopg2 (без SQLAlchemy)
             try:
@@ -113,7 +117,8 @@ if USE_DB:
                 conn.close()
                 print("[INFO] Прямое psycopg2-подключение работает! Проблема в SQLAlchemy.")
             except Exception as e2:
-                print(f"[WARN] Прямое psycopg2 тоже не работает: {e2}")
+                DB_ERROR += f" | psycopg2: {e2}"
+                print(f"[WARN] Прямое psycopg2: {e2}")
                 print("[WARN] Переключаюсь на JSON (файловая система эфемерна на Render!)")
             global USE_DB, load_data, save_data
             USE_DB = False
@@ -1543,6 +1548,7 @@ def api_debug():
     db_status = 'active' if USE_DB else 'json_fallback'
     return jsonify({
         'db_mode': db_status,
+        'db_error': DB_ERROR,
         'houses': len(data.get('houses', [])),
         'bookings': len(data.get('bookings', [])),
         'reviews': len(data.get('reviews', [])),
