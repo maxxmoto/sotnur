@@ -33,8 +33,14 @@ if USE_DB:
     from flask_sqlalchemy import SQLAlchemy
     app = Flask(__name__)
     app.secret_key = os.environ.get('SECRET_KEY', os.urandom(24).hex())
-    app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
+    # Явно указываем psycopg2 + sslmode через connect_args (Supabase)
+    _db_url = DATABASE_URL.replace('?sslmode=require', '').replace('postgresql://', 'postgresql+psycopg2://')
+    app.config['SQLALCHEMY_DATABASE_URI'] = _db_url
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+        'connect_args': {'sslmode': 'require'},
+        'pool_pre_ping': True
+    }
     app.config['UPLOAD_FOLDER'] = 'uploads'
     app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024
     db = SQLAlchemy(app)
@@ -97,7 +103,18 @@ if USE_DB:
                     db.session.add(UserModel(login='admin', password='sotnur2026'))
                     db.session.commit()
         except Exception as e:
-            print(f"[WARN] PostgreSQL не подключена: {e}. Переключаюсь на JSON.")
+            import traceback
+            print(f"[WARN] PostgreSQL не подключена: {e}")
+            traceback.print_exc()
+            # Fallback: пробуем прямое psycopg2 (без SQLAlchemy)
+            try:
+                import psycopg2
+                conn = psycopg2.connect(DATABASE_URL)
+                conn.close()
+                print("[INFO] Прямое psycopg2-подключение работает! Проблема в SQLAlchemy.")
+            except Exception as e2:
+                print(f"[WARN] Прямое psycopg2 тоже не работает: {e2}")
+                print("[WARN] Переключаюсь на JSON (файловая система эфемерна на Render!)")
             global USE_DB, load_data, save_data
             USE_DB = False
             load_data = _json_load_data
@@ -279,9 +296,12 @@ def after_request(response):
 
 
 @app.context_processor
-def inject_flash():
+def inject_globals():
     flash_msg = session.pop('flash_message', None)
-    return {'flash_message': flash_msg}
+    return {
+        'flash_message': flash_msg,
+        'use_db': USE_DB
+    }
 
 # Пути к файлам
 DATA_FILE = os.path.join(os.path.dirname(__file__), 'data.json')
@@ -1513,6 +1533,23 @@ def api_stats():
         'confirmed_bookings': confirmed_bookings,
         'new_bookings': new_bookings,
         'month_revenue': month_revenue
+    })
+
+
+@app.route('/api/debug')
+def api_debug():
+    """Диагностика: режим работы, кол-во данных, статус БД"""
+    data = load_data()
+    db_status = 'active' if USE_DB else 'json_fallback'
+    return jsonify({
+        'db_mode': db_status,
+        'houses': len(data.get('houses', [])),
+        'bookings': len(data.get('bookings', [])),
+        'reviews': len(data.get('reviews', [])),
+        'users': len(data.get('users', [])),
+        'fpdf': FPDF_AVAILABLE,
+        'pil': PIL_AVAILABLE,
+        'database_url_set': bool(DATABASE_URL)
     })
 
 
