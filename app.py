@@ -25,6 +25,145 @@ try:
 except ImportError:
     PIL_AVAILABLE = False
 
+# PostgreSQL (через Supabase) на Render, JSON локально
+DATABASE_URL = os.environ.get('DATABASE_URL', '')
+USE_DB = bool(DATABASE_URL)
+
+if USE_DB:
+    from flask_sqlalchemy import SQLAlchemy
+    app = Flask(__name__)
+    app.secret_key = os.environ.get('SECRET_KEY', os.urandom(24).hex())
+    app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['UPLOAD_FOLDER'] = 'uploads'
+    app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024
+    db = SQLAlchemy(app)
+
+    class HouseModel(db.Model):
+        __tablename__ = 'houses'
+        id = db.Column(db.Integer, primary_key=True)
+        name = db.Column(db.String(200), nullable=False)
+        short_desc = db.Column(db.String(500))
+        full_desc = db.Column(db.Text)
+        price = db.Column(db.Integer, nullable=False)
+        max_guests = db.Column(db.Integer, default=2)
+        images = db.Column(db.JSON, default=list)
+        amenities = db.Column(db.JSON, default=list)
+        calendar = db.Column(db.JSON, default=dict)
+
+    class BookingModel(db.Model):
+        __tablename__ = 'bookings'
+        id = db.Column(db.Integer, primary_key=True)
+        house_id = db.Column(db.Integer)
+        name = db.Column(db.String(200))
+        phone = db.Column(db.String(100))
+        checkin = db.Column(db.String(10))
+        checkout = db.Column(db.String(10))
+        status = db.Column(db.String(20), default='new')
+        created_at = db.Column(db.String(30))
+
+    class ReviewModel(db.Model):
+        __tablename__ = 'reviews'
+        id = db.Column(db.Integer, primary_key=True)
+        house_id = db.Column(db.Integer)
+        author = db.Column(db.String(200))
+        avatar = db.Column(db.String(500))
+        text = db.Column(db.Text)
+        rating = db.Column(db.Integer, default=5)
+
+    class UserModel(db.Model):
+        __tablename__ = 'users'
+        id = db.Column(db.Integer, primary_key=True)
+        login = db.Column(db.String(100), unique=True)
+        password = db.Column(db.String(200))
+
+    def init_db():
+        """Создаёт таблицы и сидирует данные"""
+        with app.app_context():
+            db.create_all()
+            if not UserModel.query.first():
+                for h_data in DEFAULT_HOUSES:
+                    db.session.add(HouseModel(
+                        id=h_data['id'], name=h_data['name'],
+                        short_desc=h_data.get('short_desc', ''),
+                        full_desc=h_data.get('full_desc', ''),
+                        price=h_data['price'],
+                        max_guests=h_data.get('max_guests', 2),
+                        images=h_data.get('images', []),
+                        amenities=h_data.get('amenities', []),
+                        calendar=h_data.get('calendar', {})
+                    ))
+                db.session.add(UserModel(login='admin', password='sotnur2026'))
+                db.session.commit()
+
+    def load_data():
+        """Загрузка данных из PostgreSQL"""
+        data = {"houses": [], "bookings": [], "reviews": [], "users": []}
+        with app.app_context():
+            for h in HouseModel.query.all():
+                data['houses'].append({
+                    'id': h.id, 'name': h.name,
+                    'short_desc': h.short_desc or '', 'full_desc': h.full_desc or '',
+                    'price': h.price, 'max_guests': h.max_guests or 2,
+                    'images': h.images or [], 'amenities': h.amenities or [],
+                    'calendar': h.calendar or {}
+                })
+            for b in BookingModel.query.all():
+                data['bookings'].append({
+                    'id': b.id, 'house_id': b.house_id,
+                    'name': b.name, 'phone': b.phone or '',
+                    'checkin': b.checkin, 'checkout': b.checkout,
+                    'status': b.status or 'new', 'created_at': b.created_at or ''
+                })
+            for r in ReviewModel.query.all():
+                data['reviews'].append({
+                    'id': r.id, 'house_id': r.house_id,
+                    'author': r.author, 'avatar': r.avatar or '',
+                    'text': r.text, 'rating': r.rating or 5
+                })
+            for u in UserModel.query.all():
+                data['users'].append({'login': u.login, 'password': u.password})
+        return data
+
+    def save_data(data):
+        """Сохранение данных в PostgreSQL"""
+        with app.app_context():
+            HouseModel.query.delete()
+            BookingModel.query.delete()
+            ReviewModel.query.delete()
+            UserModel.query.delete()
+            for h in data.get('houses', []):
+                db.session.add(HouseModel(
+                    id=h['id'], name=h['name'],
+                    short_desc=h.get('short_desc', ''),
+                    full_desc=h.get('full_desc', ''),
+                    price=h['price'], max_guests=h.get('max_guests', 2),
+                    images=h.get('images', []),
+                    amenities=h.get('amenities', []),
+                    calendar=h.get('calendar', {})
+                ))
+            for b in data.get('bookings', []):
+                db.session.add(BookingModel(
+                    id=b['id'], house_id=b['house_id'],
+                    name=b['name'], phone=b.get('phone', ''),
+                    checkin=b['checkin'], checkout=b['checkout'],
+                    status=b.get('status', 'new'), created_at=b.get('created_at', '')
+                ))
+            for r in data.get('reviews', []):
+                db.session.add(ReviewModel(
+                    id=r['id'], house_id=r['house_id'],
+                    author=r['author'], avatar=r.get('avatar', ''),
+                    text=r['text'], rating=r.get('rating', 5)
+                ))
+            for u in data.get('users', []):
+                db.session.add(UserModel(login=u['login'], password=u['password']))
+            db.session.commit()
+else:
+    app = Flask(__name__)
+    app.secret_key = os.environ.get('SECRET_KEY', os.urandom(24).hex())
+    app.config['UPLOAD_FOLDER'] = 'uploads'
+    app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024
+
 
 def optimize_image(filepath, max_size=1200):
     """Сжимает и ресайзит изображение при загрузке"""
@@ -109,14 +248,7 @@ def send_email_notification(subject, body):
         print(f"Ошибка email: {e}")
         return False
 
-# Конфигурация приложения
-app = Flask(__name__)
-app.secret_key = os.environ.get('SECRET_KEY', os.urandom(24).hex())
-app.config['UPLOAD_FOLDER'] = 'uploads'
-app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50 MB max для загрузки фото
-
-
-# Обработчик для передачи flash_message в шаблоны
+# Обработчики (применяются к app из if/else выше)
 @app.before_request
 def before_request():
     pass
@@ -130,7 +262,6 @@ def after_request(response):
     return response
 
 
-# context_processor для передачи flash в шаблоны
 @app.context_processor
 def inject_flash():
     flash_msg = session.pop('flash_message', None)
@@ -1412,9 +1543,12 @@ def api_stats():
 
 # ==================== ЗАПУСК ПРИЛОЖЕНИЯ ====================
 
-# Seed database on first run + миграция новых домов
-seed_default_data()
-migrate_missing_houses()
+# Инициализация БД (PostgreSQL на Render, JSON локально)
+if USE_DB:
+    init_db()
+else:
+    seed_default_data()
+    migrate_missing_houses()
 
 # Создаём директорию для загрузок если нет
 if not os.path.exists(UPLOADS_DIR):
