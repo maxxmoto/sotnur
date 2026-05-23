@@ -35,7 +35,14 @@ if USE_DB:
     app = Flask(__name__)
     app.secret_key = os.environ.get('SECRET_KEY', os.urandom(24).hex())
     # Явно указываем psycopg2 + sslmode через connect_args (Supabase)
-    _db_url = DATABASE_URL.replace('?sslmode=require', '').replace('postgresql://', 'postgresql+psycopg2://')
+    # Host db.xsflapcisewlgikndalm.supabase.co резолвится только в IPv6,
+    # у Render нет IPv6-маршрута, поэтому используем IPv4-совместимый порт 6543 (pooler)
+    _db_url = (DATABASE_URL
+        .replace('?sslmode=require', '')
+        .replace('postgresql://', 'postgresql+psycopg2://')
+        .replace(':5432/', ':6543/'))
+    # pgbouncer=true для pooler (первый query param → ?, не &)
+    _db_url += '?pgbouncer=true'
     app.config['SQLALCHEMY_DATABASE_URI'] = _db_url
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
@@ -110,15 +117,16 @@ if USE_DB:
             DB_ERROR = f"SQLAlchemy: {msg}"
             print(f"[WARN] PostgreSQL не подключена: {msg}")
             traceback.print_exc()
-            # Fallback: пробуем прямое psycopg2 (без SQLAlchemy)
+            # Fallback: пробуем прямое psycopg2 (без SQLAlchemy) через pooler port 6543
             try:
                 import psycopg2
-                conn = psycopg2.connect(DATABASE_URL)
+                _pooler_url = DATABASE_URL.replace(':5432/', ':6543/')
+                conn = psycopg2.connect(_pooler_url)
                 conn.close()
-                print("[INFO] Прямое psycopg2-подключение работает! Проблема в SQLAlchemy.")
+                print("[INFO] Прямое psycopg2 через pooler (6543) работает!")
             except Exception as e2:
-                DB_ERROR += f" | psycopg2: {e2}"
-                print(f"[WARN] Прямое psycopg2: {e2}")
+                DB_ERROR += f" | psycopg2 pooler: {e2}"
+                print(f"[WARN] Прямое psycopg2 pooler: {e2}")
                 print("[WARN] Переключаюсь на JSON (файловая система эфемерна на Render!)")
             global USE_DB, load_data, save_data
             USE_DB = False
