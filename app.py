@@ -302,20 +302,20 @@ def phone_link(value):
     return '+' + digits
 
 
+def _json_load_data():
+    """Загрузка данных из JSON-файла"""
+    try:
+        with open(DATA_FILE, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {"houses": [], "reviews": [], "bookings": [], "users": []}
+
+def _json_save_data(data):
+    """Сохранение данных в JSON-файл"""
+    with open(DATA_FILE, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
 if not USE_DB:
-    def _json_load_data():
-        """Загрузка данных из JSON-файла"""
-        try:
-            with open(DATA_FILE, 'r', encoding='utf-8') as f:
-                return json.load(f)
-        except (FileNotFoundError, json.JSONDecodeError):
-            return {"houses": [], "reviews": [], "bookings": [], "users": []}
-
-    def _json_save_data(data):
-        """Сохранение данных в JSON-файл"""
-        with open(DATA_FILE, 'w', encoding='utf-8') as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
-
     load_data = _json_load_data
     save_data = _json_save_data
 
