@@ -104,16 +104,17 @@
             <article class="house-card glass" data-house-id="{{ house.id }}" data-max-guests="{{ house.max_guests }}">
                 <div class="house-carousel">
                     <div class="carousel-images">
-                        {% for img in house.images[:3] %}
+                        {% for img in house.images %}
                         <img src="{{ img }}" alt="{{ house.name }}" class="carousel-img" loading="lazy" {% if loop.first %}fetchpriority="high"{% endif %}>
                         {% endfor %}
                     </div>
                     <button class="carousel-btn carousel-prev" aria-label="Назад">❮</button>
                     <button class="carousel-btn carousel-next" aria-label="Вперёд">❯</button>
                     <div class="carousel-dots">
-                        {% for img in house.images[:3] %}
+                        {% for img in house.images %}
                         <span class="carousel-dot {% if loop.first %}active{% endif %}"></span>
                         {% endfor %}
+                        {% if house.images|length == 1 %}<style>.house-carousel .carousel-btn, .house-carousel .carousel-dots { display: none !important; }</style>{% endif %}
                     </div>
                 </div>
                 
