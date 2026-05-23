@@ -286,19 +286,19 @@ def phone_link(value):
     return '+' + digits
 
 
-def load_data():
-    """Загрузка данных из JSON-файла"""
-    try:
-        with open(DATA_FILE, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError):
-        return {"houses": [], "reviews": [], "bookings": [], "users": []}
+if not USE_DB:
+    def load_data():
+        """Загрузка данных из JSON-файла"""
+        try:
+            with open(DATA_FILE, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError):
+            return {"houses": [], "reviews": [], "bookings": [], "users": []}
 
-
-def save_data(data):
-    """Сохранение данных в JSON-файл"""
-    with open(DATA_FILE, 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
+    def save_data(data):
+        """Сохранение данных в JSON-файл"""
+        with open(DATA_FILE, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
 
 
 DEFAULT_HOUSES = [
