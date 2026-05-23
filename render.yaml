@@ -13,6 +13,6 @@ services:
       - key: PYTHON_VERSION
         value: "3.11.0"
       - key: DATABASE_URL
-        value: "postgresql://postgres:2Nt-xQt-Sf3-h6b@db.xsflapcisewlgikndalm.supabase.co:5432/postgres"
+        value: "postgresql://postgres:2Nt-xQt-Sf3-h6b@db.xsflapcisewlgikndalm.supabase.co:5432/postgres?sslmode=require"
       - key: EMAIL_PASSWORD
         sync: false

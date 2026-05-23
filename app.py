@@ -79,24 +79,33 @@ if USE_DB:
 
     def init_db():
         """Создаёт таблицы и сидирует данные"""
-        with app.app_context():
-            db.create_all()
-            if not UserModel.query.first():
-                for h_data in DEFAULT_HOUSES:
-                    db.session.add(HouseModel(
-                        id=h_data['id'], name=h_data['name'],
-                        short_desc=h_data.get('short_desc', ''),
-                        full_desc=h_data.get('full_desc', ''),
-                        price=h_data['price'],
-                        max_guests=h_data.get('max_guests', 2),
-                        images=h_data.get('images', []),
-                        amenities=h_data.get('amenities', []),
-                        calendar=h_data.get('calendar', {})
-                    ))
-                db.session.add(UserModel(login='admin', password='sotnur2026'))
-                db.session.commit()
+        try:
+            with app.app_context():
+                db.create_all()
+                if not UserModel.query.first():
+                    for h_data in DEFAULT_HOUSES:
+                        db.session.add(HouseModel(
+                            id=h_data['id'], name=h_data['name'],
+                            short_desc=h_data.get('short_desc', ''),
+                            full_desc=h_data.get('full_desc', ''),
+                            price=h_data['price'],
+                            max_guests=h_data.get('max_guests', 2),
+                            images=h_data.get('images', []),
+                            amenities=h_data.get('amenities', []),
+                            calendar=h_data.get('calendar', {})
+                        ))
+                    db.session.add(UserModel(login='admin', password='sotnur2026'))
+                    db.session.commit()
+        except Exception as e:
+            print(f"[WARN] PostgreSQL не подключена: {e}. Переключаюсь на JSON.")
+            global USE_DB, load_data, save_data
+            USE_DB = False
+            load_data = _json_load_data
+            save_data = _json_save_data
+            seed_default_data()
+            migrate_missing_houses()
 
-    def load_data():
+    def _db_load_data():
         """Загрузка данных из PostgreSQL"""
         data = {"houses": [], "bookings": [], "reviews": [], "users": []}
         with app.app_context():
@@ -125,7 +134,7 @@ if USE_DB:
                 data['users'].append({'login': u.login, 'password': u.password})
         return data
 
-    def save_data(data):
+    def _db_save_data(data):
         """Сохранение данных в PostgreSQL"""
         with app.app_context():
             HouseModel.query.delete()
@@ -158,6 +167,9 @@ if USE_DB:
             for u in data.get('users', []):
                 db.session.add(UserModel(login=u['login'], password=u['password']))
             db.session.commit()
+
+    load_data = _db_load_data
+    save_data = _db_save_data
 else:
     app = Flask(__name__)
     app.secret_key = os.environ.get('SECRET_KEY', os.urandom(24).hex())
@@ -166,10 +178,11 @@ else:
 
 
 def optimize_image(filepath, max_size=1200):
-    """Сжимает и ресайзит изображение при загрузке"""
+    """Сжимает и ресайзит изображение при загрузке. Возвращает новый путь (с .jpg)."""
     if not PIL_AVAILABLE:
-        return
+        return filepath
     try:
+        new_path = os.path.splitext(filepath)[0] + '.jpg'
         img = PILImage.open(filepath)
         if max(img.size) > max_size:
             ratio = max_size / max(img.size)
@@ -177,9 +190,12 @@ def optimize_image(filepath, max_size=1200):
             img = img.resize(new_size, PILImage.LANCZOS)
         if img.mode in ('RGBA', 'P'):
             img = img.convert('RGB')
-        img.save(filepath, 'JPEG', quality=85, optimize=True)
+        img.save(new_path, 'JPEG', quality=85, optimize=True)
+        if new_path != filepath:
+            os.remove(filepath)
+        return new_path
     except Exception:
-        pass
+        return filepath
 
 # Telegram конфигурация (только через переменные окружения!)
 TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN', '')
@@ -287,7 +303,7 @@ def phone_link(value):
 
 
 if not USE_DB:
-    def load_data():
+    def _json_load_data():
         """Загрузка данных из JSON-файла"""
         try:
             with open(DATA_FILE, 'r', encoding='utf-8') as f:
@@ -295,10 +311,13 @@ if not USE_DB:
         except (FileNotFoundError, json.JSONDecodeError):
             return {"houses": [], "reviews": [], "bookings": [], "users": []}
 
-    def save_data(data):
+    def _json_save_data(data):
         """Сохранение данных в JSON-файл"""
         with open(DATA_FILE, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
+
+    load_data = _json_load_data
+    save_data = _json_save_data
 
 
 DEFAULT_HOUSES = [
@@ -307,78 +326,23 @@ DEFAULT_HOUSES = [
         "name": "Дубовая роща",
         "short_desc": "Тихий дом в окружении дубов",
         "full_desc": "Дом расположен в живописной дубовой роще. Внутри — деревянная отделка, камин и большая терраса с видом на лес. Идеальное место для уединённого отдыха.",
-        "price": 7000,
+        "price": 5000,
         "max_guests": 4,
-        "images": ["https://images.unsplash.com/photo-1505691938895-1758d7feb511?w=600"],
-        "amenities": ["Баня", "Мангал", "Камин", "Wi-Fi"],
+        "images": [],
+        "amenities": ["wi-fi", "камин", "терраса", "парковка"],
         "calendar": {}
     },
     {
         "id": 9,
-        "name": "Сосновый бор",
-        "short_desc": "Уютный дом в сосновом лесу",
-        "full_desc": "Дом в тихом месте, окружённый соснами. Идеально для семейного отдыха. Рядом лесные тропы и озеро.",
-        "price": 8000,
-        "max_guests": 4,
-        "images": ["https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600"],
-        "amenities": ["Баня", "Мангал", "Купель", "Wi-Fi"],
-        "calendar": {}
-    },
-    {
-        "id": 10,
-        "name": "Берёзовая заводь",
-        "short_desc": "Дом с видом на озеро",
-        "full_desc": "Просторный дом прямо у воды. Своя купель и баня. Летом можно рыбачить и кататься на лодке.",
-        "price": 12000,
+        "name": "Берёзовая аллея",
+        "short_desc": "Просторный дом недалеко от озера",
+        "full_desc": "Светлый дом в окружении берёз. Рядом озеро и лесные тропы. Есть мангальная зона, баня и Wi-Fi. Подходит для семейного отдыха.",
+        "price": 6500,
         "max_guests": 6,
-        "images": ["https://images.unsplash.com/photo-1449157291145-7efd050a4d0e?w=600"],
-        "amenities": ["Баня", "Мангал", "Купель", "Wi-Fi", "Лодка"],
+        "images": [],
+        "amenities": ["wi-fi", "баня", "мангал", "парковка", "кухня"],
         "calendar": {}
     },
-    {
-        "id": 11,
-        "name": "Шале «На рассвете»",
-        "short_desc": "Большой дом для компании",
-        "full_desc": "Просторный дом с двумя спальнями, большой гостиной и верандой. Восходы над лесом — главное украшение этого места.",
-        "price": 15000,
-        "max_guests": 8,
-        "images": ["https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600"],
-        "amenities": ["Баня", "Мангал", "Купель", "Wi-Fi", "Камин"],
-        "calendar": {}
-    },
-    {
-        "id": 12,
-        "name": "Кленовый хутор",
-        "short_desc": "Премиальный дом с панорамой",
-        "full_desc": "Элитный дом с панорамными окнами, сауной и бассейном. Подходит для больших компаний и семейных праздников.",
-        "price": 25000,
-        "max_guests": 10,
-        "images": ["https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600"],
-        "amenities": ["Баня", "Мангал", "Сауна", "Wi-Fi", "Бассейн", "Купель"],
-        "calendar": {}
-    },
-    {
-        "id": 13,
-        "name": "Лесная поляна",
-        "short_desc": "Уютный домик для двоих",
-        "full_desc": "Небольшой романтичный домик на краю леса. Есть открытая купель под звёздами и мангальная зона.",
-        "price": 6000,
-        "max_guests": 2,
-        "images": ["https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600"],
-        "amenities": ["Купель", "Мангал", "Wi-Fi"],
-        "calendar": {}
-    },
-    {
-        "id": 14,
-        "name": "Озерный причал",
-        "short_desc": "Дом с собственной купелью",
-        "full_desc": "Дом прямо у озера с собственным причалом и купелью на дровах. Лодка и рыболовные снасти входят в стоимость.",
-        "price": 10000,
-        "max_guests": 5,
-        "images": ["https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600"],
-        "amenities": ["Баня", "Купель", "Лодка", "Мангал", "Wi-Fi"],
-        "calendar": {}
-    }
 ]
 
 def seed_default_data():
@@ -907,7 +871,8 @@ def admin_house_add():
                     filename = f"house{new_house_id}_{datetime.now().timestamp()}{ext}"
                     filepath = os.path.join(UPLOADS_DIR, filename)
                     file.save(filepath)
-                    optimize_image(filepath)
+                    optimized = optimize_image(filepath)
+                    filename = os.path.basename(optimized)
                     images.append(f"uploads/{filename}")
     
     new_house = {
@@ -962,10 +927,11 @@ def admin_house_edit(house_id):
                         ext = os.path.splitext(file.filename)[1].lower()
                         if ext in ['.jpg', '.jpeg', '.png', '.gif', '.webp']:
                             filename = f"house{house_id}_{datetime.now().timestamp()}{ext}"
-                    filepath = os.path.join(UPLOADS_DIR, filename)
-                    file.save(filepath)
-                    optimize_image(filepath)
-                    house['images'].append(f"uploads/{filename}")
+                            filepath = os.path.join(UPLOADS_DIR, filename)
+                            file.save(filepath)
+                            optimized = optimize_image(filepath)
+                            filename = os.path.basename(optimized)
+                            house['images'].append(f"uploads/{filename}")
 
 
 @app.route('/admin/house/<int:house_id>/delete', methods=['POST'])
@@ -1008,7 +974,8 @@ def admin_upload_images(house_id):
                 filename = secure_filename(f"house{house_id}_{datetime.now().timestamp()}_{file.filename}")
                 filepath = os.path.join(UPLOADS_DIR, filename)
                 file.save(filepath)
-                optimize_image(filepath)
+                optimized = optimize_image(filepath)
+                filename = os.path.basename(optimized)
                 uploaded_urls.append(f"uploads/{filename}")
     
     # Добавляем к дому
