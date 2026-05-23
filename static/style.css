@@ -111,6 +111,14 @@ img {
     color: var(--white);
 }
 
+/* === Отступ под фиксированную шапку === */
+#booking-widget,
+#houses,
+#contacts,
+.house-page {
+    scroll-margin-top: 100px;
+}
+
 /* === Шапка === */
 .header {
     position: fixed;
@@ -118,16 +126,17 @@ img {
     left: 0;
     right: 0;
     z-index: 1000;
-    padding: 16px 0;
+    padding: 12px 0;
     transition: var(--transition);
-    background: transparent;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px);
+    box-shadow: var(--shadow);
 }
 
 .header.scrolled {
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(20px);
-    box-shadow: var(--shadow);
-    padding: 12px 0;
+    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    padding: 8px 0;
 }
 
 .header .container {
