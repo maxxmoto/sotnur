@@ -112,6 +112,10 @@ img {
 }
 
 /* === Отступ под фиксированную шапку === */
+.header-spacer {
+    height: 85px;
+}
+
 #booking-widget,
 #houses,
 #contacts,
@@ -292,7 +296,7 @@ img {
     justify-content: center;
     position: relative;
     text-align: center;
-    padding: 120px 24px 80px;
+    padding: 40px 24px 80px;
     background: linear-gradient(180deg, #f5f3ef 0%, #faf8f5 50%, var(--cream) 100%);
     overflow: hidden;
 }
