@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Вход в админку — SOTNUR</title>
+    <title>Вход в админку — Морской Глаз</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -29,15 +29,28 @@
             text-align: center;
             margin-bottom: 30px;
         }
-        .login-logo span:first-child {
-            font-size: 48px;
+        .login-logo .logo-dot {
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #5a8a6b, #c4a97d);
+            margin-bottom: 12px;
         }
-        .login-logo span:last-child {
+        .login-logo .logo-name {
             display: block;
-            font-size: 24px;
-            font-weight: 700;
+            font-size: 15px;
+            font-weight: 500;
+            color: #666;
+            letter-spacing: 0.3px;
+        }
+        .login-logo .logo-name strong {
+            display: block;
+            font-size: 28px;
+            font-weight: 800;
             color: #1a1a2e;
-            margin-top: 10px;
+            letter-spacing: 0.5px;
+            margin-top: -2px;
         }
         .login-title {
             text-align: center;
@@ -94,8 +107,8 @@
     <div class="login-page">
         <div class="login-card">
             <div class="login-logo">
-                <span>🏔️</span>
-                <span>SOTNUR</span>
+                <div class="logo-dot"></div>
+                <span class="logo-name">Морской<br><strong>Глаз</strong></span>
             </div>
             <h1 class="login-title">Вход в админ-панель</h1>
             

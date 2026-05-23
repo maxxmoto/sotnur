@@ -1186,7 +1186,7 @@ def admin_booking_pdf(booking_id):
         def header(self):
             self.set_font('Arial', 'B', 20)
             self.set_text_color(90, 138, 107)
-            self.cell(0, 20, 'SOTNUR - Booking Voucher', align='C')
+            self.cell(0, 20, 'Морской Глаз - Booking Voucher', align='C')
             self.ln(20)
     
     pdf = PDF()
@@ -1523,7 +1523,7 @@ if not os.path.exists(UPLOADS_DIR):
 
 if __name__ == '__main__':
     print("=" * 50)
-    print("SOTNUR - Server started!")
+    print("Морской Глаз - Server started!")
     print("Site: http://127.0.0.1:5000")
     print("Admin: http://127.0.0.1:5000/admin")
     print("Login: admin / sotnur2026")

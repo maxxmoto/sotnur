@@ -140,17 +140,42 @@ img {
 .logo {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 24px;
-    font-weight: 700;
+    gap: 10px;
+    text-decoration: none;
+    line-height: 1.2;
 }
 
 .logo-icon {
-    font-size: 28px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--sand-dark));
+    flex-shrink: 0;
 }
 
 .logo-text {
     color: var(--primary-dark);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    line-height: 1.15;
+}
+
+.logo-text strong {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    display: block;
+    margin-top: -1px;
+}
+
+@media (max-width: 767px) {
+    .logo-text {
+        font-size: 13px;
+    }
+    .logo-text strong {
+        font-size: 18px;
+    }
 }
 
 .nav {
@@ -1080,8 +1105,8 @@ img {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 22px;
-    font-weight: 700;
+    font-size: 20px;
+    font-weight: 800;
     color: var(--text);
     margin-bottom: 12px;
 }

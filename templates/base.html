@@ -3,26 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}SOTNUR — Дома в Марий Эл{% endblock %}</title>
+    <title>{% block title %}Морской Глаз — Дома в Марий Эл{% endblock %}</title>
     
     <!-- SEO Meta Tags -->
     <meta name="description" content="Аренда домов и шале в Сотнуре, Марий Эл. Уютные места для отдыха на природе. Забронировать дом на берегу озера.">
     <meta name="keywords" content="аренда дома, отдых на природе, Марий Эл, Сотнур, шале, коттедж, бронирование, баня, мангал">
-    <meta name="author" content="SOTNUR">
+    <meta name="author" content="Морской Глаз">
     <meta name="robots" content="index, follow">
     <meta name="language" content="Russian">
     
     <!-- Open Graph -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="SOTNUR — Дома в Марий Эл">
+    <meta property="og:title" content="Морской Глаз — Дома в Марий Эл">
     <meta property="og:description" content="Уютные дома в Сотнуре. Отдых на природе с комфортом.">
     <meta property="og:url" content="https://sotnur.ru">
     <meta property="og:image" content="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200">
-    <meta property="og:site_name" content="SOTNUR">
+    <meta property="og:site_name" content="Морской Глаз">
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="SOTNUR — Дома в Марий Эл">
+    <meta name="twitter:title" content="Морской Глаз — Дома в Марий Эл">
     <meta name="twitter:description" content="Уютные дома в Сотнуре. Отдых на природе с комфортом.">
     
     <!-- Favicon -->
@@ -35,19 +35,19 @@
     <meta name="theme-color" content="#5a8a6b">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="SOTNUR">
+    <meta name="apple-mobile-web-app-title" content="Морской Глаз">
     <meta name="format-detection" content="telephone=yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="msapplication-TileColor" content="#5a8a6b">
     <meta name="msapplication-navbutton-color" content="#5a8a6b">
-    <meta name="application-name" content="SOTNUR">
+    <meta name="application-name" content="Морской Глаз">
     <link rel="apple-touch-icon" sizes="180x180" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🏔️%3C/text%3E%3C/svg%3E">
     
     <!-- Preconnect -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=20260515">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=20260523">
     
     {% block extra_head %}{% endblock %}
 </head>
@@ -56,8 +56,8 @@
     <header class="header" id="header">
         <div class="container header-container">
             <a href="/" class="logo">
-                <span class="logo-icon">🏔️</span>
-                <span class="logo-text">SOTNUR</span>
+                <span class="logo-icon"></span>
+                <span class="logo-text">Морской<br><strong>Глаз</strong></span>
             </a>
             
             <nav class="nav" id="nav">
@@ -126,25 +126,15 @@
                 
                 <div class="contacts-map">
                     <iframe 
-                        src="https://yandex.ru/map-widget/v1/?um=constructor%3A4a5e8c9e6c4b7f3d8e2a1b0c9d8e7f6a5b4c3d2e1f0a9b8c7d6e5f4a3b2c1d0e9f8a7b6c5d4e3f2a1b0c9d8e7f6a5&amp;source=constructor" 
-                        width="100%" 
-                        height="400" 
-                        frameborder="0" 
-                        allowfullscreen 
-                        loading="lazy"
-                        referrerpolicy="no-referrer-when-downgrade">
-                    </iframe>
-                </div>
-            </div>
-        </div>
-    </section>
+                        src="https://yandex.ru/map-widget/v1/?ll=49.3814%2C56.7859&z=14&l=map&pt=49.3814%2C56.7859%2Cpm2rdl"
+
 
     <!-- Футер -->
     <footer class="footer">
         <div class="container footer-container">
             <div class="footer-logo">
-                <span class="logo-icon">🏔️</span>
-                <span class="logo-text">SOTNUR</span>
+                <span class="logo-icon"></span>
+                <span class="logo-text">Морской Глаз</span>
             </div>
             <p class="footer-text">© 2026 Дома в Сотнуре. Все права защищены.</p>
             <p class="footer-tagline">Отдых на природе в Марий Эл</p>

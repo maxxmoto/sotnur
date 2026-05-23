@@ -65,7 +65,13 @@ body {
     color: var(--admin-accent);
 }
 
-.admin-logo span:first-child { font-size: 22px; }
+.admin-logo-dot {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--admin-accent), #c4a97d);
+    flex-shrink: 0;
+}
 
 .admin-badge {
     background: var(--admin-accent);
