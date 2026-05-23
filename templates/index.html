@@ -102,6 +102,7 @@
         <div class="houses-grid">
             {% for house in all_houses %}
             <article class="house-card glass" data-house-id="{{ house.id }}" data-max-guests="{{ house.max_guests }}">
+                {% if house.images %}
                 <div class="house-carousel">
                     <div class="carousel-images">
                         {% for img in house.images %}
@@ -117,6 +118,7 @@
                         {% if house.images|length == 1 %}<style>.house-carousel .carousel-btn, .house-carousel .carousel-dots { display: none !important; }</style>{% endif %}
                     </div>
                 </div>
+                {% endif %}
                 
                 <div class="house-content">
                     <h3 class="house-name">{{ house.name }}</h3>
