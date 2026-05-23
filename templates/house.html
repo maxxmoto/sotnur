@@ -16,7 +16,7 @@
                 {% if house.images|length > 1 %}
                 <div class="gallery-carousel">
                     {% for img in house.images %}
-                    <img src="{% if img.startswith('http') %}{{ img }}{% else %}/{{ img }}{% endif %}" alt="{{ house.name }}" class="gallery-img {% if loop.first %}active{% endif %}" data-index="{{ loop.index0 }}" loading="lazy">
+                    <img src="{% if img.startswith('http') %}{{ img }}{% else %}/{{ img }}{% endif %}" alt="{{ house.name }}" class="gallery-img {% if loop.first %}active{% endif %}" data-index="{{ loop.index0 }}" loading="lazy" {% if loop.first %}fetchpriority="high"{% endif %}>
                     {% endfor %}
                     <button class="gallery-nav gallery-prev" onclick="gallerySlide(-1)">❮</button>
                     <button class="gallery-nav gallery-next" onclick="gallerySlide(1)">❯</button>

@@ -19,6 +19,29 @@ try:
 except ImportError:
     FPDF_AVAILABLE = False
 
+try:
+    from PIL import Image as PILImage
+    PIL_AVAILABLE = True
+except ImportError:
+    PIL_AVAILABLE = False
+
+
+def optimize_image(filepath, max_size=1200):
+    """Сжимает и ресайзит изображение при загрузке"""
+    if not PIL_AVAILABLE:
+        return
+    try:
+        img = PILImage.open(filepath)
+        if max(img.size) > max_size:
+            ratio = max_size / max(img.size)
+            new_size = (int(img.size[0] * ratio), int(img.size[1] * ratio))
+            img = img.resize(new_size, PILImage.LANCZOS)
+        if img.mode in ('RGBA', 'P'):
+            img = img.convert('RGB')
+        img.save(filepath, 'JPEG', quality=85, optimize=True)
+    except Exception:
+        pass
+
 # Telegram конфигурация (только через переменные окружения!)
 TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN', '')
 TELEGRAM_CHAT_ID = os.environ.get('TELEGRAM_CHAT_ID', '')
@@ -101,6 +124,9 @@ def before_request():
 
 @app.after_request
 def after_request(response):
+    if request.path.startswith('/static/') or request.path.startswith('/uploads/'):
+        response.headers['Cache-Control'] = 'public, max-age=86400'
+        response.headers['Vary'] = 'Accept-Encoding'
     return response
 
 
@@ -750,6 +776,7 @@ def admin_house_add():
                     filename = f"house{new_house_id}_{datetime.now().timestamp()}{ext}"
                     filepath = os.path.join(UPLOADS_DIR, filename)
                     file.save(filepath)
+                    optimize_image(filepath)
                     images.append(f"uploads/{filename}")
     
     new_house = {
@@ -804,15 +831,10 @@ def admin_house_edit(house_id):
                         ext = os.path.splitext(file.filename)[1].lower()
                         if ext in ['.jpg', '.jpeg', '.png', '.gif', '.webp']:
                             filename = f"house{house_id}_{datetime.now().timestamp()}{ext}"
-                            filepath = os.path.join(UPLOADS_DIR, filename)
-                            file.save(filepath)
-                            house['images'].append(f"uploads/{filename}")
-            
-            break
-    
-    save_data(data)
-    session['flash_message'] = {'type': 'success', 'text': 'Дом обновлён'}
-    return redirect(url_for('admin'))
+                    filepath = os.path.join(UPLOADS_DIR, filename)
+                    file.save(filepath)
+                    optimize_image(filepath)
+                    house['images'].append(f"uploads/{filename}")
 
 
 @app.route('/admin/house/<int:house_id>/delete', methods=['POST'])
@@ -855,6 +877,7 @@ def admin_upload_images(house_id):
                 filename = secure_filename(f"house{house_id}_{datetime.now().timestamp()}_{file.filename}")
                 filepath = os.path.join(UPLOADS_DIR, filename)
                 file.save(filepath)
+                optimize_image(filepath)
                 uploaded_urls.append(f"uploads/{filename}")
     
     # Добавляем к дому
