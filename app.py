@@ -1194,7 +1194,7 @@ def admin_booking_pdf(booking_id):
         def header(self):
             self.set_font('Arial', 'B', 20)
             self.set_text_color(90, 138, 107)
-            self.cell(0, 20, 'Морской Глаз - Booking Voucher', align='C')
+            self.cell(0, 20, 'Morskoy Glaz - Booking Voucher', align='C')
             self.ln(20)
     
     pdf = PDF()
