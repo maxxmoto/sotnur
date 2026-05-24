@@ -58,33 +58,69 @@ if USE_DB:
     # Session mode (5432): username = postgres (без project-ref)
     _project_ref = _db_host.replace('db.', '').replace('.supabase.co', '').replace('.supabase.com', '')
     _pooler_hosts = [
-        # (host, port, username_format)
-        ('aws-0-eu-central-1.pooler.supabase.com', 6543, 'with_ref'),   # Frankfurt transaction
-        ('aws-0-eu-central-1.pooler.supabase.com', 5432, 'plain'),      # Frankfurt session
-        ('aws-0-eu-west-1.pooler.supabase.com', 6543, 'with_ref'),      # Ireland transaction
-        ('aws-0-eu-west-1.pooler.supabase.com', 5432, 'plain'),         # Ireland session
-        ('aws-0-eu-west-2.pooler.supabase.com', 6543, 'with_ref'),      # London transaction
-        ('aws-0-eu-west-2.pooler.supabase.com', 5432, 'plain'),         # London session
-        ('aws-0-eu-north-1.pooler.supabase.com', 6543, 'with_ref'),     # Stockholm transaction
-        ('aws-0-eu-north-1.pooler.supabase.com', 5432, 'plain'),        # Stockholm session
-        ('aws-0-us-east-1.pooler.supabase.com', 6543, 'with_ref'),      # US East transaction
-        ('aws-0-us-east-1.pooler.supabase.com', 5432, 'plain'),         # US East session
-        ('aws-0-us-west-2.pooler.supabase.com', 6543, 'with_ref'),      # US West transaction
-        ('aws-0-us-west-2.pooler.supabase.com', 5432, 'plain'),         # US West session
-        (_db_host, int(_db_port), 'plain'),                              # оригинал (IPv6 fallback)
+        ('aws-0-eu-central-1.pooler.supabase.com', 6543, 'with_ref'),
+        ('aws-0-eu-central-1.pooler.supabase.com', 6543, 'ref_only'),
+        ('aws-0-eu-central-1.pooler.supabase.com', 5432, 'with_ref'),
+        ('aws-0-eu-central-1.pooler.supabase.com', 5432, 'ref_only'),
+        ('aws-0-eu-west-1.pooler.supabase.com', 6543, 'with_ref'),
+        ('aws-0-eu-west-1.pooler.supabase.com', 6543, 'ref_only'),
+        ('aws-0-eu-west-1.pooler.supabase.com', 5432, 'with_ref'),
+        ('aws-0-eu-west-1.pooler.supabase.com', 5432, 'ref_only'),
+        ('aws-0-eu-west-2.pooler.supabase.com', 6543, 'with_ref'),
+        ('aws-0-eu-west-2.pooler.supabase.com', 6543, 'ref_only'),
+        ('aws-0-eu-north-1.pooler.supabase.com', 6543, 'with_ref'),
+        ('aws-0-eu-north-1.pooler.supabase.com', 6543, 'ref_only'),
+        ('aws-0-us-east-1.pooler.supabase.com', 6543, 'with_ref'),
+        ('aws-0-us-east-1.pooler.supabase.com', 6543, 'ref_only'),
+        ('aws-0-us-west-2.pooler.supabase.com', 6543, 'with_ref'),
+        ('aws-0-us-west-2.pooler.supabase.com', 6543, 'ref_only'),
     ]
 
     def _build_pooler_url(host, port, user_fmt):
         if user_fmt == 'with_ref' and _project_ref:
             _u = f'{_db_user}.{_project_ref}'
+        elif user_fmt == 'ref_only' and _project_ref:
+            _u = _project_ref
         else:
             _u = _db_user
-        return (f'postgresql+psycopg2://{_u}:{_db_pass}'
-                f'@{host}:{port}/{_db_name}')
+        return f'postgresql+psycopg2://{_u}:{_db_pass}@{host}:{port}/{_db_name}'
 
-    # Стартовая URL: pooler с IPv4 (первый доступный)
-    _startup_url = _build_pooler_url(*_pooler_hosts[0])
-    app.config['SQLALCHEMY_DATABASE_URI'] = _startup_url
+    # Пробуем все pooler хосты при импорте (до создания SQLAlchemy)
+    # Первый успешный используем для Flask-SQLAlchemy
+    _db_url = None
+    try:
+        import psycopg2
+        import socket
+        for _ph, _pp, _pf in _pooler_hosts:
+            _url = _build_pooler_url(_ph, _pp, _pf)
+            try:
+                # Проверяем IPv4
+                _ip = None
+                for _info in socket.getaddrinfo(_ph, _pp, socket.AF_INET, socket.SOCK_STREAM):
+                    _ip = _info[4][0]
+                    break
+                if not _ip:
+                    continue
+                # Пробуем подключиться
+                conn = psycopg2.connect(_url)
+                conn.close()
+                _db_url = _url
+                print(f"[DB] ✅ {_ph}:{_pp} ({_pf}) → {_ip}")
+                break
+            except Exception as _e:
+                print(f"[DB] ❌ {_ph}:{_pp} ({_pf}): {_e}")
+                continue
+    except ImportError:
+        print("[DB] psycopg2 not available")
+
+    if not _db_url:
+        # Fallback: оригинальный host (IPv6 — может не работать на Render)
+        print("[DB] Все pooler хосты недоступны. Пробую оригинальный host через IPv6...")
+        _db_url = DATABASE_URL.replace('postgresql://', 'postgresql+psycopg2://')
+        if '?sslmode=' in _db_url:
+            _db_url = _db_url.split('?')[0]
+
+    app.config['SQLALCHEMY_DATABASE_URI'] = _db_url
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
         'connect_args': {'sslmode': 'require'},
@@ -133,72 +169,36 @@ if USE_DB:
         password = db.Column(db.String(200))
 
     def init_db():
-        """Создаёт таблицы и сидирует данные. Пробует все pooler хосты по порядку."""
+        """Создаёт таблицы и сидирует данные (использует уже выбранный _db_url)"""
         global USE_DB, load_data, save_data, DB_ERROR
-        import traceback
-        import socket
-
-        # Пробуем каждый pooler хост в порядке приоритета
-        _tried = []
-        for _ph, _pp, _pf in _pooler_hosts:
-            _url = _build_pooler_url(_ph, _pp, _pf)
-            _tried.append(f'{_ph}:{_pp} ({_pf})')
-
-            # Проверяем, есть ли IPv4 у хоста
-            _ip = None
-            try:
-                for _info in socket.getaddrinfo(_ph, _pp, socket.AF_INET, socket.SOCK_STREAM):
-                    _ip = _info[4][0]
-                    break
-            except Exception:
-                pass
-
-            if not _ip:
-                print(f"[DB] {_ph}:{_pp} ({_pf}) — нет IPv4, пропускаем")
-                continue
-
-            print(f"[DB] Пробуем {_ph}:{_pp} ({_pf}) → {_ip}")
-            app.config['SQLALCHEMY_DATABASE_URI'] = _url
-
-            try:
-                db.engine.dispose()  # сбросить старый пул
-                with app.app_context():
-                    db.create_all()
-                    # Проверяем, что таблицы созданы и можно читать
-                    db.session.execute(db.text('SELECT 1'))
-                    # Если всё ОК — сидируем если пусто
-                    if not UserModel.query.first():
-                        for h_data in DEFAULT_HOUSES:
-                            db.session.add(HouseModel(
-                                id=h_data['id'], name=h_data['name'],
-                                short_desc=h_data.get('short_desc', ''),
-                                full_desc=h_data.get('full_desc', ''),
-                                price=h_data['price'],
-                                max_guests=h_data.get('max_guests', 2),
-                                images=h_data.get('images', []),
-                                amenities=h_data.get('amenities', []),
-                                calendar=h_data.get('calendar', {})
-                            ))
-                        db.session.add(UserModel(login='admin', password='sotnur2026'))
-                        db.session.commit()
-                    print(f"[DB] ✅ Успешно: {_ph}:{_pp} ({_pf})")
-                    return  # Всё работает!
-            except Exception as e:
-                msg = str(e)
-                DB_ERROR = f"[{_pf}] {_ph}:{_pp} — {msg}"
-                print(f"[DB] ❌ {_ph}:{_pp} ({_pf}): {msg}")
-                continue
-
-        # Все хосты не сработали
-        _all_tried = ' | '.join(_tried)
-        DB_ERROR = f"Все хосты недоступны: {_all_tried}. Последняя ошибка: {DB_ERROR}"
-        print(f"[WARN] PostgreSQL не подключена: {DB_ERROR}")
-        print("[WARN] Переключаюсь на JSON (файловая система эфемерна на Render!)")
-        USE_DB = False
-        load_data = _json_load_data
-        save_data = _json_save_data
-        seed_default_data()
-        migrate_missing_houses()
+        try:
+            with app.app_context():
+                db.create_all()
+                if not UserModel.query.first():
+                    for h_data in DEFAULT_HOUSES:
+                        db.session.add(HouseModel(
+                            id=h_data['id'], name=h_data['name'],
+                            short_desc=h_data.get('short_desc', ''),
+                            full_desc=h_data.get('full_desc', ''),
+                            price=h_data['price'],
+                            max_guests=h_data.get('max_guests', 2),
+                            images=h_data.get('images', []),
+                            amenities=h_data.get('amenities', []),
+                            calendar=h_data.get('calendar', {})
+                        ))
+                    db.session.add(UserModel(login='admin', password='sotnur2026'))
+                    db.session.commit()
+                print("[DB] ✅ init_db() — таблицы созданы/подтверждены")
+        except Exception as e:
+            import traceback
+            DB_ERROR = f"init_db: {e}"
+            print(f"[WARN] PostgreSQL init_db() не удалась: {e}")
+            traceback.print_exc()
+            USE_DB = False
+            load_data = _json_load_data
+            save_data = _json_save_data
+            seed_default_data()
+            migrate_missing_houses()
 
     def _db_load_data():
         """Загрузка данных из PostgreSQL"""
