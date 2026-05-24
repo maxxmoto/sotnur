@@ -53,49 +53,30 @@ if USE_DB:
 
     # Host db.xsflapcisewlgikndalm.supabase.co резолвится только в IPv6,
     # Render не может доставить пакеты по IPv6 до Supabase (Hetzner).
-    # Используем универсальный pooler Supabase с IPv4 + project ref в username
-    # Если pooler не сработает — пробуем оригинальный host (на случай если Render починит IPv6)
+    # Используем универсальный pooler Supabase с IPv4
+    # Transaction mode (6543): username = postgres.<project-ref>
+    # Session mode (5432): username = postgres (без project-ref)
     _project_ref = _db_host.replace('db.', '').replace('.supabase.co', '').replace('.supabase.com', '')
     _pooler_hosts = [
-        ('aws-0-eu-central-1.pooler.supabase.com', 6543),  # Frankfurt (IPv4)
-        ('aws-0-eu-west-1.pooler.supabase.com', 6543),   # Ireland (IPv4)
-        (_db_host, int(_db_port)),                         # оригинал (IPv6) как fallback
+        # (host, port, username_format)
+        ('aws-0-eu-central-1.pooler.supabase.com', 6543, 'with_ref'),   # transaction pooler
+        ('aws-0-eu-central-1.pooler.supabase.com', 5432, 'plain'),      # session pooler
+        ('aws-0-eu-west-1.pooler.supabase.com', 6543, 'with_ref'),      # transaction pooler IE
+        ('aws-0-eu-west-1.pooler.supabase.com', 5432, 'plain'),         # session pooler IE
+        (_db_host, int(_db_port), 'plain'),                              # оригинал (IPv6 fallback)
     ]
-    _pooler_username = f'{_db_user}.{_project_ref}' if _project_ref else _db_user
 
-    def _build_pooler_url(host, port):
-        return (f'postgresql+psycopg2://{_pooler_username}:{_db_pass}'
+    def _build_pooler_url(host, port, user_fmt):
+        if user_fmt == 'with_ref' and _project_ref:
+            _u = f'{_db_user}.{_project_ref}'
+        else:
+            _u = _db_user
+        return (f'postgresql+psycopg2://{_u}:{_db_pass}'
                 f'@{host}:{port}/{_db_name}')
 
-    # Пробуем хосты по порядку, берём первый доступный
-    _connected = False
-    import socket
-    for _ph, _pp in _pooler_hosts:
-        try:
-            _ip = None
-            # Проверяем, есть ли IPv4 у хоста
-            for _info in socket.getaddrinfo(_ph, _pp, socket.AF_INET, socket.SOCK_STREAM):
-                _ip = _info[4][0]
-                break
-            if _ip:
-                print(f"[DB] {_ph}:{_pp} → {_ip} (IPv4) — will try")
-                _db_url = _build_pooler_url(_ph, _pp)
-                _connected = True
-                break
-            else:
-                print(f"[DB] {_ph}:{_pp} — нет IPv4, пропускаем")
-        except Exception as _dns_err:
-            print(f"[DB] {_ph}:{_pp} — DNS error: {_dns_err}")
-            continue
-
-    if not _connected:
-        # fallback: используем оригинальный URL как есть (возможно IPv6 заработает)
-        print("[DB] No IPv4 host found, falling back to original URL")
-        _db_url = DATABASE_URL.replace('postgresql://', 'postgresql+psycopg2://')
-
-    _db_url += '' if '?' in _db_url else '?sslmode=require'
-
-    app.config['SQLALCHEMY_DATABASE_URI'] = _db_url
+    # Стартовая URL: pooler с IPv4 (первый доступный)
+    _startup_url = _build_pooler_url(*_pooler_hosts[0])
+    app.config['SQLALCHEMY_DATABASE_URI'] = _startup_url
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
         'connect_args': {'sslmode': 'require'},
@@ -144,52 +125,72 @@ if USE_DB:
         password = db.Column(db.String(200))
 
     def init_db():
-        """Создаёт таблицы и сидирует данные"""
-        try:
-            with app.app_context():
-                db.create_all()
-                if not UserModel.query.first():
-                    for h_data in DEFAULT_HOUSES:
-                        db.session.add(HouseModel(
-                            id=h_data['id'], name=h_data['name'],
-                            short_desc=h_data.get('short_desc', ''),
-                            full_desc=h_data.get('full_desc', ''),
-                            price=h_data['price'],
-                            max_guests=h_data.get('max_guests', 2),
-                            images=h_data.get('images', []),
-                            amenities=h_data.get('amenities', []),
-                            calendar=h_data.get('calendar', {})
-                        ))
-                    db.session.add(UserModel(login='admin', password='sotnur2026'))
-                    db.session.commit()
-        except Exception as e:
-            global USE_DB, load_data, save_data, DB_ERROR
-            import traceback
-            msg = str(e)
-            DB_ERROR = f"SQLAlchemy: {msg}"
-            print(f"[WARN] PostgreSQL не подключена: {msg}")
-            traceback.print_exc()
-            # Fallback: пробуем прямое psycopg2 через pooler (IPv4)
+        """Создаёт таблицы и сидирует данные. Пробует все pooler хосты по порядку."""
+        global USE_DB, load_data, save_data, DB_ERROR
+        import traceback
+        import socket
+
+        # Пробуем каждый pooler хост в порядке приоритета
+        _tried = []
+        for _ph, _pp, _pf in _pooler_hosts:
+            _url = _build_pooler_url(_ph, _pp, _pf)
+            _tried.append(f'{_ph}:{_pp} ({_pf})')
+
+            # Проверяем, есть ли IPv4 у хоста
+            _ip = None
             try:
-                import psycopg2
-                for _fb_ph, _fb_pp in _pooler_hosts:
-                    try:
-                        _fb_url = _build_pooler_url(_fb_ph, _fb_pp)
-                        conn = psycopg2.connect(_fb_url)
-                        conn.close()
-                        print(f"[INFO] psycopg2 pooler работает: {_fb_ph}:{_fb_pp}")
-                        break
-                    except Exception as _fb_e:
-                        print(f"[WARN] psycopg2 {_fb_ph}:{_fb_pp} — {_fb_e}")
-            except Exception as e2:
-                DB_ERROR += f" | psycopg2 pooler: {e2}"
-                print("[WARN] Переключаюсь на JSON (файловая система эфемерна на Render!)")
-            global USE_DB, load_data, save_data
-            USE_DB = False
-            load_data = _json_load_data
-            save_data = _json_save_data
-            seed_default_data()
-            migrate_missing_houses()
+                for _info in socket.getaddrinfo(_ph, _pp, socket.AF_INET, socket.SOCK_STREAM):
+                    _ip = _info[4][0]
+                    break
+            except Exception:
+                pass
+
+            if not _ip:
+                print(f"[DB] {_ph}:{_pp} ({_pf}) — нет IPv4, пропускаем")
+                continue
+
+            print(f"[DB] Пробуем {_ph}:{_pp} ({_pf}) → {_ip}")
+            app.config['SQLALCHEMY_DATABASE_URI'] = _url
+
+            try:
+                db.engine.dispose()  # сбросить старый пул
+                with app.app_context():
+                    db.create_all()
+                    # Проверяем, что таблицы созданы и можно читать
+                    db.session.execute(db.text('SELECT 1'))
+                    # Если всё ОК — сидируем если пусто
+                    if not UserModel.query.first():
+                        for h_data in DEFAULT_HOUSES:
+                            db.session.add(HouseModel(
+                                id=h_data['id'], name=h_data['name'],
+                                short_desc=h_data.get('short_desc', ''),
+                                full_desc=h_data.get('full_desc', ''),
+                                price=h_data['price'],
+                                max_guests=h_data.get('max_guests', 2),
+                                images=h_data.get('images', []),
+                                amenities=h_data.get('amenities', []),
+                                calendar=h_data.get('calendar', {})
+                            ))
+                        db.session.add(UserModel(login='admin', password='sotnur2026'))
+                        db.session.commit()
+                    print(f"[DB] ✅ Успешно: {_ph}:{_pp} ({_pf})")
+                    return  # Всё работает!
+            except Exception as e:
+                msg = str(e)
+                DB_ERROR = f"[{_pf}] {_ph}:{_pp} — {msg}"
+                print(f"[DB] ❌ {_ph}:{_pp} ({_pf}): {msg}")
+                continue
+
+        # Все хосты не сработали
+        _all_tried = ' | '.join(_tried)
+        DB_ERROR = f"Все хосты недоступны: {_all_tried}. Последняя ошибка: {DB_ERROR}"
+        print(f"[WARN] PostgreSQL не подключена: {DB_ERROR}")
+        print("[WARN] Переключаюсь на JSON (файловая система эфемерна на Render!)")
+        USE_DB = False
+        load_data = _json_load_data
+        save_data = _json_save_data
+        seed_default_data()
+        migrate_missing_houses()
 
     def _db_load_data():
         """Загрузка данных из PostgreSQL"""
