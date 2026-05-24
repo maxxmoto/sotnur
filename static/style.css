@@ -305,8 +305,22 @@ img {
     content: '';
     position: absolute;
     inset: 0;
-    background: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920') center/cover no-repeat;
-    opacity: 0.08;
+    background: linear-gradient(135deg, #1a3a2a 0%, #2d5a40 25%, #3a7a5a 50%, #4a8a7a 75%, #6aa8a8 100%) center/cover no-repeat;
+    opacity: 0.12;
+}
+
+.hero-bg {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #0d2818 0%, #1a3a2a 30%, #2a5a40 60%, #3a7a6a 100%) center/cover no-repeat;
+}
+
+.hero-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 30% 80%, rgba(100,200,180,0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 30%, rgba(50,120,80,0.1) 0%, transparent 50%);
 }
 
 .hero-content {

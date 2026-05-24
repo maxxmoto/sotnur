@@ -1633,6 +1633,34 @@ else:
 if not os.path.exists(UPLOADS_DIR):
     os.makedirs(UPLOADS_DIR)
 
+# Скачиваем hero-фон при старте (на Render Unsplash доступен)
+_HERO_PATH = os.path.join(os.path.dirname(__file__), 'static', 'hero-bg.jpg')
+if not os.path.exists(_HERO_PATH):
+    try:
+        import requests as _req
+        _r = _req.get(
+            'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920',
+            timeout=15, headers={'User-Agent': 'Mozilla/5.0'}
+        )
+        if _r.status_code == 200:
+            with open(_HERO_PATH, 'wb') as _f:
+                _f.write(_r.content)
+            print(f"[STATIC] hero-bg.jpg downloaded ({len(_r.content)} bytes)")
+            # Обновляем CSS на локальный файл (один раз)
+            _css_path = os.path.join(os.path.dirname(__file__), 'static', 'style.css')
+            if os.path.exists(_css_path):
+                _css = open(_css_path, 'r', encoding='utf-8').read()
+                _old = "linear-gradient(135deg, #0d2818 0%, #1a3a2a 30%, #2a5a40 60%, #3a7a6a 100%) center/cover no-repeat"
+                _new = "url('/static/hero-bg.jpg') center/cover no-repeat"
+                if _old in _css:
+                    _css = _css.replace(_old, _new)
+                    open(_css_path, 'w', encoding='utf-8').write(_css)
+                    print("[STATIC] CSS updated to use local hero-bg.jpg")
+        else:
+            print(f"[STATIC] hero download fail: HTTP {_r.status_code}")
+    except Exception as _e:
+        print(f"[STATIC] hero download error: {_e}")
+
 if __name__ == '__main__':
     print("=" * 50)
     print("Морской Глаз - Server started!")
