@@ -1650,9 +1650,15 @@ if not os.path.exists(_HERO_PATH):
             _css_path = os.path.join(os.path.dirname(__file__), 'static', 'style.css')
             if os.path.exists(_css_path):
                 _css = open(_css_path, 'r', encoding='utf-8').read()
-                _old = "linear-gradient(135deg, #0d2818 0%, #1a3a2a 30%, #2a5a40 60%, #3a7a6a 100%) center/cover no-repeat"
-                _new = "url('/static/hero-bg.jpg') center/cover no-repeat"
-                if _old in _css:
+                _old = "url('data:image/svg+xml,%3Csvg xmlns="
+                _idx = _css.find(_old)
+                if _idx >= 0:
+                    _end = _css.find("')", _idx) + 2
+                    _new = "url('/static/hero-bg.jpg')"
+                    _css = _css[:_idx] + _new + _css[_end:]
+                    open(_css_path, 'w', encoding='utf-8').write(_css)
+                    print("[STATIC] CSS updated to use local hero-bg.jpg")
+        else:
                     _css = _css.replace(_old, _new)
                     open(_css_path, 'w', encoding='utf-8').write(_css)
                     print("[STATIC] CSS updated to use local hero-bg.jpg")
