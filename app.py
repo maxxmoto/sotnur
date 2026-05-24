@@ -26,7 +26,9 @@ except ImportError:
     PIL_AVAILABLE = False
 
 # PostgreSQL (через Supabase) на Render, JSON локально
-DATABASE_URL = os.environ.get('DATABASE_URL', '')
+# Fallback URL для Neon (если Render Dashboard не установил DATABASE_URL)
+_NEON_URL = "postgresql://neondb_owner:npg_bkXZBLxcM9W0@ep-silent-grass-aqcheui1-pooler.c-8.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+DATABASE_URL = os.environ.get('DATABASE_URL', _NEON_URL)
 USE_DB = bool(DATABASE_URL)
 DB_ERROR = None  # хранит последнюю ошибку подключения
 
@@ -1606,6 +1608,8 @@ def api_debug():
     return jsonify({
         'db_mode': db_status,
         'db_error': DB_ERROR,
+        'database_url_env_set': bool(os.environ.get('DATABASE_URL', '')),
+        'database_host': _db_host if '_db_host' in dir() else 'none',
         'houses': len(data.get('houses', [])),
         'bookings': len(data.get('bookings', [])),
         'reviews': len(data.get('reviews', [])),
