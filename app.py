@@ -59,10 +59,18 @@ if USE_DB:
     _project_ref = _db_host.replace('db.', '').replace('.supabase.co', '').replace('.supabase.com', '')
     _pooler_hosts = [
         # (host, port, username_format)
-        ('aws-0-eu-central-1.pooler.supabase.com', 6543, 'with_ref'),   # transaction pooler
-        ('aws-0-eu-central-1.pooler.supabase.com', 5432, 'plain'),      # session pooler
-        ('aws-0-eu-west-1.pooler.supabase.com', 6543, 'with_ref'),      # transaction pooler IE
-        ('aws-0-eu-west-1.pooler.supabase.com', 5432, 'plain'),         # session pooler IE
+        ('aws-0-eu-central-1.pooler.supabase.com', 6543, 'with_ref'),   # Frankfurt transaction
+        ('aws-0-eu-central-1.pooler.supabase.com', 5432, 'plain'),      # Frankfurt session
+        ('aws-0-eu-west-1.pooler.supabase.com', 6543, 'with_ref'),      # Ireland transaction
+        ('aws-0-eu-west-1.pooler.supabase.com', 5432, 'plain'),         # Ireland session
+        ('aws-0-eu-west-2.pooler.supabase.com', 6543, 'with_ref'),      # London transaction
+        ('aws-0-eu-west-2.pooler.supabase.com', 5432, 'plain'),         # London session
+        ('aws-0-eu-north-1.pooler.supabase.com', 6543, 'with_ref'),     # Stockholm transaction
+        ('aws-0-eu-north-1.pooler.supabase.com', 5432, 'plain'),        # Stockholm session
+        ('aws-0-us-east-1.pooler.supabase.com', 6543, 'with_ref'),      # US East transaction
+        ('aws-0-us-east-1.pooler.supabase.com', 5432, 'plain'),         # US East session
+        ('aws-0-us-west-2.pooler.supabase.com', 6543, 'with_ref'),      # US West transaction
+        ('aws-0-us-west-2.pooler.supabase.com', 5432, 'plain'),         # US West session
         (_db_host, int(_db_port), 'plain'),                              # оригинал (IPv6 fallback)
     ]
 
