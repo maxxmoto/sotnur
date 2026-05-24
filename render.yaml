@@ -13,6 +13,6 @@ services:
       - key: PYTHON_VERSION
         value: "3.11.0"
       - key: DATABASE_URL
-        value: "postgresql://postgres:2Nt-xQt-Sf3-h6b@db.xsflapcisewlgikndalm.supabase.co:5432/postgres?sslmode=require"
+        value: "postgresql://neondb_owner:npg_bkXZBLxcM9W0@ep-silent-grass-aqcheui1-pooler.c-8.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
       - key: EMAIL_PASSWORD
         sync: false

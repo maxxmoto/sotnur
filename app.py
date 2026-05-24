@@ -36,7 +36,7 @@ if USE_DB:
     app = Flask(__name__)
     app.secret_key = os.environ.get('SECRET_KEY', os.urandom(24).hex())
 
-    # Парсим оригинальный DATABASE_URL
+    # Парсим DATABASE_URL для извлечения компонентов
     _match = re.match(r'postgresql://([^:]+):([^@]+)@([^:]+):(\d+)/(.+?)(\?.*)?$', DATABASE_URL)
     if _match:
         _db_user = _match.group(1)
@@ -51,79 +51,63 @@ if USE_DB:
         _db_port = '5432'
         _db_name = 'postgres'
 
-    # Host db.xsflapcisewlgikndalm.supabase.co резолвится только в IPv6,
-    # Render не может доставить пакеты по IPv6 до Supabase (Hetzner).
-    # Используем универсальный pooler Supabase с IPv4
-    # Transaction mode (6543): username = postgres.<project-ref>
-    # Session mode (5432): username = postgres (без project-ref)
-    _project_ref = _db_host.replace('db.', '').replace('.supabase.co', '').replace('.supabase.com', '')
-    _pooler_hosts = [
-        ('aws-0-eu-central-1.pooler.supabase.com', 6543, 'with_ref'),
-        ('aws-0-eu-central-1.pooler.supabase.com', 6543, 'ref_only'),
-        ('aws-0-eu-central-1.pooler.supabase.com', 5432, 'with_ref'),
-        ('aws-0-eu-central-1.pooler.supabase.com', 5432, 'ref_only'),
-        ('aws-0-eu-west-1.pooler.supabase.com', 6543, 'with_ref'),
-        ('aws-0-eu-west-1.pooler.supabase.com', 6543, 'ref_only'),
-        ('aws-0-eu-west-1.pooler.supabase.com', 5432, 'with_ref'),
-        ('aws-0-eu-west-1.pooler.supabase.com', 5432, 'ref_only'),
-        ('aws-0-eu-west-2.pooler.supabase.com', 6543, 'with_ref'),
-        ('aws-0-eu-west-2.pooler.supabase.com', 6543, 'ref_only'),
-        ('aws-0-eu-north-1.pooler.supabase.com', 6543, 'with_ref'),
-        ('aws-0-eu-north-1.pooler.supabase.com', 6543, 'ref_only'),
-        ('aws-0-us-east-1.pooler.supabase.com', 6543, 'with_ref'),
-        ('aws-0-us-east-1.pooler.supabase.com', 6543, 'ref_only'),
-        ('aws-0-us-west-2.pooler.supabase.com', 6543, 'with_ref'),
-        ('aws-0-us-west-2.pooler.supabase.com', 6543, 'ref_only'),
-    ]
-
-    def _build_pooler_url(host, port, user_fmt):
-        if user_fmt == 'with_ref' and _project_ref:
-            _u = f'{_db_user}.{_project_ref}'
-        elif user_fmt == 'ref_only' and _project_ref:
-            _u = _project_ref
-        else:
-            _u = _db_user
-        return f'postgresql+psycopg2://{_u}:{_db_pass}@{host}:{port}/{_db_name}'
-
-    # Пробуем все pooler хосты при импорте (до создания SQLAlchemy)
-    # Первый успешный используем для Flask-SQLAlchemy
+    # Пробуем подключиться прямым psycopg2 (выбираем URL для Flask-SQLAlchemy)
     _db_url = None
     try:
         import psycopg2
         import socket
-        for _ph, _pp, _pf in _pooler_hosts:
-            _url = _build_pooler_url(_ph, _pp, _pf)
-            try:
-                # Проверяем IPv4
-                _ip = None
-                for _info in socket.getaddrinfo(_ph, _pp, socket.AF_INET, socket.SOCK_STREAM):
-                    _ip = _info[4][0]
-                    break
-                if not _ip:
-                    continue
-                # Пробуем подключиться
-                conn = psycopg2.connect(_url)
-                conn.close()
-                _db_url = _url
-                print(f"[DB] ✅ {_ph}:{_pp} ({_pf}) → {_ip}")
-                break
-            except Exception as _e:
-                print(f"[DB] ❌ {_ph}:{_pp} ({_pf}): {_e}")
-                continue
+
+        # 1. Пробуем оригинальный host с драйвером psycopg2
+        _url = DATABASE_URL.replace('postgresql://', 'postgresql+psycopg2://')
+        try:
+            conn = psycopg2.connect(_url)
+            conn.close()
+            print(f"[DB] ✅ Прямое подключение: {_db_host}")
+            _db_url = _url
+        except Exception as _e:
+            print(f"[DB] ❌ Прямое: {_db_host} — {_e}")
+
+            # 2. Если Supabase (IPv6-only) — пробуем pooler хосты
+            if 'supabase' in _db_host.lower():
+                _project_ref = _db_host.replace('db.', '').replace('.supabase.co', '').replace('.supabase.com', '')
+                _pooler_hosts = [
+                    ('aws-0-eu-central-1.pooler.supabase.com', 6543, 'with_ref'),
+                    ('aws-0-eu-central-1.pooler.supabase.com', 6543, 'ref_only'),
+                    ('aws-0-eu-central-1.pooler.supabase.com', 5432, 'with_ref'),
+                    ('aws-0-eu-central-1.pooler.supabase.com', 5432, 'ref_only'),
+                    ('aws-0-eu-west-1.pooler.supabase.com', 6543, 'with_ref'),
+                    ('aws-0-eu-west-1.pooler.supabase.com', 5432, 'with_ref'),
+                    ('aws-0-us-east-1.pooler.supabase.com', 6543, 'with_ref'),
+                    ('aws-0-us-west-2.pooler.supabase.com', 6543, 'with_ref'),
+                ]
+                for _ph, _pp, _pf in _pooler_hosts:
+                    _pu = f'{_db_user}.{_project_ref}' if _pf == 'with_ref' else _project_ref if _pf == 'ref_only' else _db_user
+                    _purl = f'postgresql+psycopg2://{_pu}:{_db_pass}@{_ph}:{_pp}/{_db_name}'
+                    try:
+                        _ip = None
+                        for _info in socket.getaddrinfo(_ph, _pp, socket.AF_INET, socket.SOCK_STREAM):
+                            _ip = _info[4][0]
+                            break
+                        if not _ip:
+                            continue
+                        conn = psycopg2.connect(_purl)
+                        conn.close()
+                        print(f"[DB] ✅ Pooler: {_ph}:{_pp} → {_ip}")
+                        _db_url = _purl
+                        break
+                    except Exception as _pe:
+                        print(f"[DB] ❌ Pooler: {_ph}:{_pp} ({_pf}): {_pe}")
+                        continue
     except ImportError:
-        print("[DB] psycopg2 not available")
+        print("[DB] psycopg2 не установлен")
 
     if not _db_url:
-        # Fallback: оригинальный host (IPv6 — может не работать на Render)
-        print("[DB] Все pooler хосты недоступны. Пробую оригинальный host через IPv6...")
+        print("[DB] Нет рабочего подключения. Использую оригинальный URL как fallback.")
         _db_url = DATABASE_URL.replace('postgresql://', 'postgresql+psycopg2://')
-        if '?sslmode=' in _db_url:
-            _db_url = _db_url.split('?')[0]
 
     app.config['SQLALCHEMY_DATABASE_URI'] = _db_url
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
-        'connect_args': {'sslmode': 'require'},
         'pool_pre_ping': True
     }
     app.config['UPLOAD_FOLDER'] = 'uploads'
