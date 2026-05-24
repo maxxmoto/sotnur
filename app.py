@@ -31,18 +31,70 @@ USE_DB = bool(DATABASE_URL)
 DB_ERROR = None  # хранит последнюю ошибку подключения
 
 if USE_DB:
+    import re
     from flask_sqlalchemy import SQLAlchemy
     app = Flask(__name__)
     app.secret_key = os.environ.get('SECRET_KEY', os.urandom(24).hex())
-    # Явно указываем psycopg2 + sslmode через connect_args (Supabase)
+
+    # Парсим оригинальный DATABASE_URL
+    _match = re.match(r'postgresql://([^:]+):([^@]+)@([^:]+):(\d+)/(.+?)(\?.*)?$', DATABASE_URL)
+    if _match:
+        _db_user = _match.group(1)
+        _db_pass = _match.group(2)
+        _db_host = _match.group(3)
+        _db_port = _match.group(4)
+        _db_name = _match.group(5)
+    else:
+        _db_user = 'postgres'
+        _db_pass = ''
+        _db_host = 'localhost'
+        _db_port = '5432'
+        _db_name = 'postgres'
+
     # Host db.xsflapcisewlgikndalm.supabase.co резолвится только в IPv6,
-    # у Render нет IPv6-маршрута, поэтому используем IPv4-совместимый порт 6543 (pooler)
-    _db_url = (DATABASE_URL
-        .replace('?sslmode=require', '')
-        .replace('postgresql://', 'postgresql+psycopg2://')
-        .replace(':5432/', ':6543/'))
-    # pgbouncer=true для pooler (первый query param → ?, не &)
-    _db_url += '?pgbouncer=true'
+    # Render не может доставить пакеты по IPv6 до Supabase (Hetzner).
+    # Используем универсальный pooler Supabase с IPv4 + project ref в username
+    # Если pooler не сработает — пробуем оригинальный host (на случай если Render починит IPv6)
+    _project_ref = _db_host.replace('db.', '').replace('.supabase.co', '').replace('.supabase.com', '')
+    _pooler_hosts = [
+        ('aws-0-eu-central-1.pooler.supabase.com', 6543),  # Frankfurt (IPv4)
+        ('aws-0-eu-west-1.pooler.supabase.com', 6543),   # Ireland (IPv4)
+        (_db_host, int(_db_port)),                         # оригинал (IPv6) как fallback
+    ]
+    _pooler_username = f'{_db_user}.{_project_ref}' if _project_ref else _db_user
+
+    def _build_pooler_url(host, port):
+        return (f'postgresql+psycopg2://{_pooler_username}:{_db_pass}'
+                f'@{host}:{port}/{_db_name}')
+
+    # Пробуем хосты по порядку, берём первый доступный
+    _connected = False
+    import socket
+    for _ph, _pp in _pooler_hosts:
+        try:
+            _ip = None
+            # Проверяем, есть ли IPv4 у хоста
+            for _info in socket.getaddrinfo(_ph, _pp, socket.AF_INET, socket.SOCK_STREAM):
+                _ip = _info[4][0]
+                break
+            if _ip:
+                print(f"[DB] {_ph}:{_pp} → {_ip} (IPv4) — will try")
+                _db_url = _build_pooler_url(_ph, _pp)
+                _connected = True
+                break
+            else:
+                print(f"[DB] {_ph}:{_pp} — нет IPv4, пропускаем")
+        except Exception as _dns_err:
+            print(f"[DB] {_ph}:{_pp} — DNS error: {_dns_err}")
+            continue
+
+    if not _connected:
+        # fallback: используем оригинальный URL как есть (возможно IPv6 заработает)
+        print("[DB] No IPv4 host found, falling back to original URL")
+        _db_url = DATABASE_URL.replace('postgresql://', 'postgresql+psycopg2://')
+
+    _db_url += '' if '?' in _db_url else '?sslmode=require'
+
     app.config['SQLALCHEMY_DATABASE_URI'] = _db_url
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
@@ -117,16 +169,20 @@ if USE_DB:
             DB_ERROR = f"SQLAlchemy: {msg}"
             print(f"[WARN] PostgreSQL не подключена: {msg}")
             traceback.print_exc()
-            # Fallback: пробуем прямое psycopg2 (без SQLAlchemy) через pooler port 6543
+            # Fallback: пробуем прямое psycopg2 через pooler (IPv4)
             try:
                 import psycopg2
-                _pooler_url = DATABASE_URL.replace(':5432/', ':6543/')
-                conn = psycopg2.connect(_pooler_url)
-                conn.close()
-                print("[INFO] Прямое psycopg2 через pooler (6543) работает!")
+                for _fb_ph, _fb_pp in _pooler_hosts:
+                    try:
+                        _fb_url = _build_pooler_url(_fb_ph, _fb_pp)
+                        conn = psycopg2.connect(_fb_url)
+                        conn.close()
+                        print(f"[INFO] psycopg2 pooler работает: {_fb_ph}:{_fb_pp}")
+                        break
+                    except Exception as _fb_e:
+                        print(f"[WARN] psycopg2 {_fb_ph}:{_fb_pp} — {_fb_e}")
             except Exception as e2:
                 DB_ERROR += f" | psycopg2 pooler: {e2}"
-                print(f"[WARN] Прямое psycopg2 pooler: {e2}")
                 print("[WARN] Переключаюсь на JSON (файловая система эфемерна на Render!)")
             global USE_DB, load_data, save_data
             USE_DB = False
