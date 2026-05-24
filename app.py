@@ -1633,22 +1633,6 @@ else:
 if not os.path.exists(UPLOADS_DIR):
     os.makedirs(UPLOADS_DIR)
 
-# Скачиваем hero-фон при старте (на Render Unsplash доступен)
-_HERO_PATH = os.path.join(os.path.dirname(__file__), 'static', 'hero-bg.jpg')
-# Upgrade hero background to Unsplash version on Render (higher quality)
-try:
-    import requests as _req
-    _r = _req.get(
-        'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1920',
-        timeout=15, headers={'User-Agent': 'Mozilla/5.0'}
-    )
-    if _r.status_code == 200:
-        with open(_HERO_PATH, 'wb') as _f:
-            _f.write(_r.content)
-        print(f"[STATIC] hero-bg.jpg upgraded to Unsplash ({len(_r.content)} bytes)")
-except Exception as _e:
-    print(f"[STATIC] Unsplash upgrade skipped: {_e}")
-
 if __name__ == '__main__':
     print("=" * 50)
     print("Морской Глаз - Server started!")
