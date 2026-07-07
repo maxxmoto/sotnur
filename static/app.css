@@ -1992,28 +1992,184 @@ input, select, textarea { font-family: inherit; }
 
 .btn-outline:hover { background: var(--primary); color: white; }
 
+/* ===== RESPONSIVE ===== */
+
+/* Mobile first - all defaults are mobile */
+body { padding-bottom: 80px; }
+.sticky-bar { display: flex; }
+.floating-chat { bottom: 80px; display: flex; }
+.scroll-card { min-width: 82vw; }
+.review-card { min-width: 75vw; }
+.houses-grid { grid-template-columns: 1fr; }
+.gallery-grid { grid-template-columns: 1fr 1fr; }
+.activities-grid { display: flex; flex-direction: column; gap: 12px; }
+.widget-row { flex-direction: column; }
+.widget-field-item { flex-direction: row; }
+.weather-widget { flex-direction: row; }
+.video-actions { flex-direction: column; align-items: flex-start; }
+.feature-card-body h3 { font-size: 20px; }
+
+/* Tablet (768px+) */
 @media (min-width: 768px) {
-    .houses-grid { grid-template-columns: 1fr 1fr; }
+    body { padding-bottom: 0; }
+    .sticky-bar { display: none; }
+    .floating-chat { bottom: 24px; }
+    
+    .container { padding: 0 24px; }
+    
+    .hero { height: 70vh; }
+    .hero-title { font-size: 34px; }
+    .hero-content { padding: 0 40px; bottom: 60px; }
+    
+    .booking-widget { margin-top: -50px; max-width: 720px; margin-left: auto; margin-right: auto; padding: 0; }
+    .widget-row { flex-direction: row; gap: 0; }
+    .widget-field-item { flex: 1; padding: 10px 16px; border-bottom: none; }
+    .widget-field-item + .widget-field-item { border-left: 1px solid var(--border); }
+    .widget-submit-btn { margin-top: 8px; }
+    
     .scroll-card { min-width: 340px; }
-    .review-card { min-width: 400px; }
+    .review-card { min-width: 340px; }
+    
+    .houses-grid { grid-template-columns: 1fr 1fr; }
+    
+    .gallery-grid { grid-template-columns: repeat(4, 1fr); }
+    .gallery-grid-item { aspect-ratio: 1; }
+    
+    .activities-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .activity-card { height: 180px; }
+    
+    .video-text h2 { font-size: 26px; }
+    .video-actions { flex-direction: row; align-items: center; }
+    .video-placeholder { height: 300px; }
+    
+    .feature-card { display: flex; flex-direction: row; }
+    .feature-card-img { width: 40%; height: auto; min-height: 220px; }
+    .feature-card-body { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+    
+    .corporate-card { height: 320px; }
+    .corporate-overlay h3 { font-size: 26px; }
+    
     .house-detail-grid { flex-direction: row; }
     .house-info { flex: 1; }
     .house-booking { width: 380px; flex-shrink: 0; }
+    .house-page .container { max-width: 1200px; }
+    .house-page { padding: 32px 24px 60px; }
     .house-gallery .gallery-main { max-height: 500px; }
     .gallery-img { aspect-ratio: auto; height: 500px; }
-    .house-page { padding: 32px 0 60px; }
-    .booking-widget { margin-top: -60px; }
-    .widget-row { flex-direction: row; }
-    .widget-field-item { flex: 1; }
+    .amenities-grid { grid-template-columns: repeat(2, 1fr); }
+    
     .contacts-details { flex-direction: row; flex-wrap: wrap; }
     .contact-row { flex: 1; min-width: 250px; }
+    .contacts-map { height: 280px; }
+    
+    .faq-section .faq-list { max-width: 700px; margin: 0 auto; }
+    
+    .section-title { font-size: 26px; }
+    
+    .cookie-banner { bottom: 24px; left: 24px; }
+    
+    .weather-widget { max-width: 400px; }
 }
 
+/* Desktop (1024px+) */
 @media (min-width: 1024px) {
+    .container { padding: 0 32px; max-width: 1200px; margin: 0 auto; }
+    
     .hero { height: 85vh; }
-    .hero-title { font-size: 40px; }
-    .sticky-bar { display: none; }
-    body { padding-bottom: 0; }
+    .hero-title { font-size: 44px; }
+    .hero-content { max-width: 600px; }
+    .hero-desc { font-size: 18px; }
+    .hero-btn { font-size: 16px; padding: 14px 36px; }
+    .hero-dots { right: 40px; }
+    
+    .booking-widget { margin-top: -60px; max-width: 900px; }
+    .widget-card { padding: 20px 24px; flex-direction: row; align-items: center; }
+    .widget-card form { flex: 1; }
+    .widget-row { gap: 0; }
+    .widget-field-item { flex: 1; padding: 12px 20px; }
+    .widget-field-label { font-size: 11px; }
+    .widget-field-value { font-size: 14px; }
+    .widget-submit-btn { width: auto; margin-top: 0; padding: 14px 32px; flex-shrink: 0; }
+    
+    .scroll-card { min-width: 380px; }
+    .review-card { min-width: 360px; }
+    .scroll-section { max-width: 1200px; margin-left: auto; margin-right: auto; }
+    .scroll-track { padding: 0 32px 20px; }
+    .scroll-header { padding: 0 32px; }
+    .section-title { padding: 0 32px; }
+    
+    .houses-grid { grid-template-columns: repeat(2, 1fr); gap: 24px; }
+    .houses-section { max-width: 1200px; margin: 0 auto 48px; }
+    
+    .gallery-section { max-width: 1200px; margin: 0 auto 48px; }
+    .gallery-grid { gap: 12px; }
+    
+    .activities-grid { max-width: 900px; margin: 0 auto; }
+    .activity-card { height: 200px; }
+    
+    .feature-card { margin: 0 auto 48px; max-width: 900px; }
+    .full-section .scroll-track { max-width: 1200px; margin: 0 auto; }
+    .full-section .section-title { max-width: 1200px; margin: 0 auto 20px; }
+    
+    .corporate-section { max-width: 900px; margin: 0 auto 48px; }
+    .corporate-card { height: 380px; }
+    .corporate-overlay { padding: 32px; }
+    .corporate-overlay h3 { font-size: 30px; }
+    .corporate-overlay p { font-size: 15px; max-width: 500px; }
+    
+    .faq-section { max-width: 800px; margin: 0 auto 48px; }
+    .faq-question { font-size: 15px; padding: 18px 20px; }
+    
+    .contacts-section { max-width: 900px; margin: 0 auto 48px; }
+    .contacts-details { flex-wrap: nowrap; }
+    
+    .house-page .container { padding: 0 32px; }
+    .house-booking { width: 400px; }
+    .amenities-grid { grid-template-columns: repeat(3, 1fr); }
+    
+    .weather-widget { max-width: 400px; }
+    
+    .video-section { max-width: 800px; margin: 0 auto 48px; }
+    .video-placeholder { height: 350px; }
+    
+    .nav-overlay-link { font-size: 26px; }
+}
+
+/* Large Desktop (1280px+) */
+@media (min-width: 1280px) {
+    .container { padding: 0 40px; max-width: 1280px; }
+    .hero-title { font-size: 48px; }
+    .booking-widget { max-width: 1000px; }
+    .scroll-card { min-width: 360px; }
+    .houses-grid { grid-template-columns: repeat(2, 1fr); gap: 28px; }
+    .house-booking { width: 420px; }
+}
+
+/* Mobile small (< 500px) overrides */
+@media (max-width: 500px) {
+    .hero { height: 70vh; }
+    .hero-title { font-size: 24px; }
+    .hero-content { bottom: 60px; padding: 0 20px; }
+    .hero-dots { right: 16px; bottom: 100px; }
+    .widget-field-item { padding: 10px 12px; }
+    .widget-field-value { font-size: 13px; }
+    .scroll-card { min-width: 88vw; }
+    .review-card { min-width: 82vw; }
+    .activity-card { height: 110px; }
+    .activity-card h3 { font-size: 16px; }
+    .corporate-card { height: 340px; }
+    .corporate-overlay h3 { font-size: 19px; }
+    .corporate-overlay p { font-size: 13px; }
+    .gallery-header { flex-direction: column; align-items: flex-start; gap: 4px; }
+    .weather-widget { padding: 12px; }
+    .weather-temp { font-size: 16px; }
+    .booking-widget { margin-top: -40px; }
+    .cookie-banner { bottom: 80px; }
+    .floating-chat { bottom: 80px; width: 48px; height: 48px; }
+    .sticky-bar-label { font-size: 11px; }
+    .sticky-bar-price { font-size: 17px; }
+    .sticky-bar-btn { padding: 10px 24px; font-size: 14px; }
+    .nav-overlay-link { font-size: 18px; }
 }
 
 /* ===== LEGAL PAGES ===== */
