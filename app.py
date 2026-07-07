@@ -551,6 +551,67 @@ def is_date_booked(house_id, date_str):
 
 # ==================== ROUTES - ГЛАВНЫЕ СТРАНИЦЫ ====================
 
+@app.route('/privacy')
+def privacy():
+    return render_template('privacy.html')
+
+@app.route('/privacy/pdf')
+def privacy_pdf():
+    if not FPDF_AVAILABLE:
+        return "PDF generation not available", 500
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_auto_page_break(auto=True, margin=20)
+    pdf.set_font('Arial', 'B', 16)
+    pdf.cell(0, 12, 'Politika obrabotki personalnykh dannykh')
+    pdf.ln(20)
+    pdf.set_font('Arial', '', 10)
+    lines = [
+        'Nastoyashchaya politika opredelyaet poryadok obrabotki personalnykh',
+        'dannykh u Operatora - IP "FIO" (dalee - "Administratsiya").',
+        '',
+        'SOSTAV I KATEGORII DANNYKH: familiya, imya, otchestvo; nomer',
+        'telefona; adres elektronnoy pochty; platezhnye rekvizity; istoriya',
+        'bronirovaniy; IP-adres, tip brauzera.',
+        '',
+        'PRAVOVYE OSNOVANIYA: st.6 152-FZ; dogovor bronirovaniya (oferta);',
+        'soglasie subyekta; trebovaniya nalogovogo zakonodatelstva.',
+        '',
+        'TSELI OBRABOTKI: podtverzhdenie i ispolnenie bronirovaniya; svyaz',
+        's gostem; vedenie bukhgalterskogo ucheta; uluchshenie kachestva',
+        'obsluzhivaniya.',
+        '',
+        'PORYADOK I USLOVIYa: obrabotka s ispolzovaniem sredstv',
+        'avtomatizatsii i bez nikh. Srok khraneniya - 3 goda posle',
+        'poslednego bronirovaniya.',
+        '',
+        'PRAVA SUBYekTA: poluchit informatsiyu ob obrabotke; trebovat',
+        'utochneniya, blokirovaniya ili unichtozheniya; otozvat soglasie;',
+        'obzhalovat deystviya v Roskomnadzore.',
+        '',
+        'OPERATOR: IP "FIO", INN: __________, OGRNIP: __________,',
+        'email: hello@sotnur.ru, tel: +7 (937) 000-00-00.',
+        '',
+        'Polnaya versiya: sotnur.ru/privacy',
+    ]
+    for line in lines:
+        if line == '':
+            pdf.ln(6)
+        else:
+            pdf.cell(0, 6, line)
+            pdf.ln(6)
+    pdf_bytes = pdf.output(dest='S')
+    if isinstance(pdf_bytes, str):
+        pdf_bytes = pdf_bytes.encode('latin-1')
+    response = make_response(pdf_bytes)
+    response.headers['Content-Type'] = 'application/pdf'
+    response.headers['Content-Disposition'] = 'attachment; filename=privacy_policy.pdf'
+    return response
+
+@app.route('/terms')
+def terms():
+    return render_template('terms.html')
+
 @app.route('/')
 def index():
     """Главная страница - список всех домов"""
@@ -637,6 +698,7 @@ def index():
     return render_template('index.html', 
                            houses=filtered_houses, 
                            all_houses=houses,
+                           all_reviews=data.get('reviews', []),
                            checkin=checkin,
                            checkout=checkout,
                            guests=guests,

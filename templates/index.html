@@ -3,187 +3,481 @@
 {% block title %}Морской Глаз — Дома в Марий Эл | Забронировать{% endblock %}
 
 {% block content %}
-<!-- Hero секция -->
-<section class="hero">
-    <div class="hero-bg"></div>
+<!-- Hero Section -->
+<section class="hero" id="hero">
+    <div class="hero-bg" id="hero-bg">
+        <svg class="svg-illustration" viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice">
+            <rect width="400" height="600" fill="#3a5a40"/>
+            <rect y="420" width="400" height="180" fill="#dad7cd"/>
+            <rect y="320" width="400" height="100" fill="#2a5a5b"/>
+            <circle cx="200" cy="370" r="40" fill="#3a8a8b" opacity="0.6"/>
+            <path d="M60 280 Q200 160 340 280Z" fill="#e8ded1"/>
+            <rect x="195" y="280" width="10" height="200" fill="#2c2c2c"/>
+            <path d="M100 420 L80 340 L130 330 L150 420Z" fill="#6b8e5c" opacity="0.7"/>
+            <path d="M280 420 L300 350 L250 340 L230 420Z" fill="#6b8e5c" opacity="0.7"/>
+        </svg>
+    </div>
     <div class="hero-overlay"></div>
-    <div class="container hero-content">
-        <h1 class="hero-title">Отдых на природе<br>в сердце Марий Эл</h1>
-        <p class="hero-subtitle">Дома и шале в Сотнуре — забронируйте идеальное место для отдыха</p>
-        <a href="#houses" class="btn btn-primary btn-large">Смотреть варианты</a>
+    <div class="hero-content">
+        <h1 class="hero-title" id="hero-title">Дневное пребывание</h1>
+        <p class="hero-desc" id="hero-desc">Отдых на изумрудном берегу озера Морской глаз.</p>
+        <a href="#houses" class="hero-btn">Подробнее</a>
     </div>
-    <div class="hero-scroll">
-        <span>Прокрутите вниз</span>
-        <div class="scroll-arrow"></div>
+    <div class="hero-dots" id="hero-dots">
+        <span class="hero-dot active" data-slide="0"></span>
+        <span class="hero-dot" data-slide="1"></span>
     </div>
 </section>
 
-<!-- Виджет бронирования -->
+<!-- Booking Widget -->
 <section class="booking-widget" id="booking-widget">
-    <div class="container">
-        <div class="widget-card glass">
-            <h2 class="widget-title">Найдите идеальный дом</h2>
-            <form method="GET" action="/" class="widget-form" id="booking-form">
-                <div class="widget-row">
-                    <div class="widget-field">
-                        <label>Заезд</label>
-                        <div class="airbnb-calendar-widget" id="checkin-widget">
+    <div class="widget-card">
+        <form method="GET" action="/" class="booking-form" id="booking-filter-form">
+            <div class="widget-row">
+                <div class="widget-field-item">
+                    <div>
+                        <p class="widget-field-label">Локация</p>
+                        <p class="widget-field-value">эко-парк Морской глаз</p>
+                    </div>
+                    <svg class="widget-field-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+                </div>
+                <div class="widget-field-item">
+                    <div style="flex:1;">
+                        <p class="widget-field-label">Заезд</p>
+                        <div class="airbnb-calendar-widget" id="checkin-widget" style="display:inline-block;">
                             <input type="hidden" id="checkin" name="checkin" value="{{ checkin or '' }}">
-                            <div class="calendar-trigger-widget" id="checkin-trigger" data-target="checkin">{{ checkin or 'Выберите дату' }}</div>
-                            <div class="calendar-dropdown-widget" id="checkin-dropdown">
-                                <div class="cal-header">
-                                    <button type="button" class="cal-btn" onclick="widgetCalPrev('checkin')">←</button>
-                                    <span class="cal-my" id="checkin-my"></span>
-                                    <button type="button" class="cal-btn" onclick="widgetCalNext('checkin')">→</button>
-                                </div>
-                                <div class="cal-week"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div>
-                                <div class="cal-days-widget" id="checkin-days"></div>
-                            </div>
+                            <span class="widget-field-value calendar-trigger-widget" id="checkin-trigger" data-target="checkin" style="background:transparent;padding:0;border:none;">{{ checkin or 'Выберите дату' }}</span>
                         </div>
                     </div>
-                    <div class="widget-field">
-                        <label>Выезд</label>
-                        <div class="airbnb-calendar-widget" id="checkout-widget">
+                    <div style="flex:1;">
+                        <p class="widget-field-label">Выезд</p>
+                        <div class="airbnb-calendar-widget" id="checkout-widget" style="display:inline-block;">
                             <input type="hidden" id="checkout" name="checkout" value="{{ checkout or '' }}">
-                            <div class="calendar-trigger-widget" id="checkout-trigger" data-target="checkout">{{ checkout or 'Выберите дату' }}</div>
-                            <div class="calendar-dropdown-widget" id="checkout-dropdown">
-                                <div class="cal-header">
-                                    <button type="button" class="cal-btn" onclick="widgetCalPrev('checkout')">←</button>
-                                    <span class="cal-my" id="checkout-my"></span>
-                                    <button type="button" class="cal-btn" onclick="widgetCalNext('checkout')">→</button>
-                                </div>
-                                <div class="cal-week"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div>
-                                <div class="cal-days-widget" id="checkout-days"></div>
-                            </div>
+                            <span class="widget-field-value calendar-trigger-widget" id="checkout-trigger" data-target="checkout" style="background:transparent;padding:0;border:none;">{{ checkout or 'Выберите дату' }}</span>
                         </div>
                     </div>
-                    <div class="widget-field">
-                        <label>Гости</label>
-                        <div class="custom-select" id="guests-select">
+                    <svg class="widget-field-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                </div>
+                <div class="widget-field-item">
+                    <div>
+                        <p class="widget-field-label">Количество гостей</p>
+                        <div class="custom-select" id="guests-select" style="position:relative;">
                             <input type="hidden" id="guests" name="guests" value="{{ guests or '' }}">
-                            <div class="select-trigger" id="guests-trigger">{% set guests_int = guests|default('')|int %}{% if guests_int == 0 %}Сколько гостей?{% elif guests_int < 7 %}{{ guests_int }} гостей{% else %}7+ гостей{% endif %}</div>
-                            <div class="select-dropdown">
-                                <div class="select-option" data-value="">Сколько гостей?</div>
-                                <div class="select-option" data-value="1">1 гость</div>
-                                <div class="select-option" data-value="2">2 гостя</div>
-                                <div class="select-option" data-value="3">3 гостя</div>
-                                <div class="select-option" data-value="4">4 гостя</div>
-                                <div class="select-option" data-value="5">5 гостей</div>
-                                <div class="select-option" data-value="6">6 гостей</div>
-                                <div class="select-option" data-value="7">7+ гостей</div>
+                            <span class="widget-field-value select-trigger" id="guests-trigger" style="background:transparent;padding:0;border:none;cursor:pointer;">
+                                {% set g = guests|default('')|int %}
+                                {% if g == 0 %}Сколько гостей?{% elif g < 7 %}{{ g }} гостей{% else %}7+ гостей{% endif %}
+                            </span>
+                            <div class="select-dropdown" style="display:none;position:absolute;top:100%;left:0;background:var(--white);border:1px solid var(--border);border-radius:var(--radius-xs);box-shadow:var(--shadow-lg);z-index:10;min-width:160px;margin-top:4px;">
+                                <div class="select-option" data-value="" style="padding:10px 14px;font-size:14px;cursor:pointer;">Сколько гостей?</div>
+                                {% for i in range(1,8) %}
+                                <div class="select-option" data-value="{{ i }}" style="padding:10px 14px;font-size:14px;cursor:pointer;">
+                                    {% if i == 1 %}1 гость{% elif i < 5 %}2 гостя{% else %}{{ i }} гостей{% endif %}
+                                </div>
+                                {% endfor %}
                             </div>
                         </div>
                     </div>
-                    <div class="widget-field">
-                        <label for="promo">Промокод</label>
-                        <input type="text" id="promo" name="promo" value="{{ promo or '' }}" placeholder="Есть промокод?">
-                    </div>
+                    <svg class="widget-field-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
                 </div>
-                <button type="submit" class="btn btn-primary btn-large btn-full-mobile">Найти дом</button>
-            </form>
-            {% if discount > 0 %}
-            <div class="widget-discount">🎉 Применена скидка {{ discount }}%!</div>
-            {% endif %}
-            {% if filter_applied %}
-            <div class="widget-result">
-                Найдено <strong>{{ houses|length }}</strong> домов по вашим критериям
             </div>
-            {% endif %}
-        </div>
-    </div>
-</section>
-
-<!-- Карточки домов -->
-<section class="houses" id="houses">
-    <div class="container">
-        <h2 class="section-title">Наши дома</h2>
-        <p class="section-subtitle">Выберите идеальное место для вашего отдыха</p>
-        
-        <div class="houses-grid">
-            {% for house in all_houses %}
-            <article class="house-card glass" data-house-id="{{ house.id }}" data-max-guests="{{ house.max_guests }}">
-                {% if house.images %}
-                <div class="house-carousel">
-                    <div class="carousel-images">
-                        {% for img in house.images %}
-                        <img src="{{ img }}" alt="{{ house.name }}" class="carousel-img" loading="lazy" {% if loop.first %}fetchpriority="high"{% endif %}>
-                        {% endfor %}
-                    </div>
-                    <button class="carousel-btn carousel-prev" aria-label="Назад">❮</button>
-                    <button class="carousel-btn carousel-next" aria-label="Вперёд">❯</button>
-                    <div class="carousel-dots">
-                        {% for img in house.images %}
-                        <span class="carousel-dot {% if loop.first %}active{% endif %}"></span>
-                        {% endfor %}
-                        {% if house.images|length == 1 %}<style>.house-carousel .carousel-btn, .house-carousel .carousel-dots { display: none !important; }</style>{% endif %}
-                    </div>
-                </div>
-                {% endif %}
-                
-                <div class="house-content">
-                    <h3 class="house-name">{{ house.name }}</h3>
-                    <p class="house-desc">{{ house.short_desc }}</p>
-                    
-                    <div class="house-meta">
-                        <span class="meta-item">
-                            <span class="meta-icon">👥</span>
-                            до {{ house.max_guests }} гостей
-                        </span>
-                        <span class="meta-item">
-                            <span class="meta-icon">💰</span>
-                            {% if house.min_price and house.min_price < house.price %}от {{ house.min_price }} ₽{% else %}{{ house.price }} ₽/ночь{% endif %}
-                        </span>
-                    </div>
-                    
-                    <div class="house-amenities">
-                        {% for amenity in house.amenities[:4] %}
-                        <span class="amenity-tag">{{ amenity }}</span>
-                        {% endfor %}
-                        {% if house.amenities|length > 4 %}
-                        <span class="amenity-more">+{{ house.amenities|length - 4 }}</span>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="house-actions">
-                        <a href="/house/{{ house.id }}" class="btn btn-outline">Подробнее</a>
-                        <button class="btn btn-primary quick-book-btn" data-house-id="{{ house.id }}" data-house-name="{{ house.name }}">Бронировать</button>
-                    </div>
-                </div>
-            </article>
-            {% endfor %}
-        </div>
-        
-        {% if houses|length == 0 and filter_applied %}
-        <div class="no-results">
-            <span class="no-results-icon">🔍</span>
-            <h3>Домов по вашим критериям не найдено</h3>
-            <p>Попробуйте изменить параметры поиска или забронировать в другой период</p>
-            <a href="/" class="btn btn-outline">Сбросить фильтры</a>
-        </div>
+            <button type="submit" class="widget-submit-btn">Подобрать номер</button>
+        </form>
+        {% if discount > 0 %}
+        <div class="widget-discount">&#127881; Применена скидка {{ discount }}%!</div>
         {% endif %}
     </div>
-</section>
 
-<!-- Почему выбирают нас -->
-<section class="features">
-    <div class="container">
-        <div class="features-grid">
-            <div class="feature-item glass">
-                <span class="feature-icon">🌲</span>
-                <h3>Природа Марий Эл</h3>
-                <p>Сосновые леса, чистые озёра и свежий воздух</p>
+    <!-- Weather Widget -->
+    <div class="weather-widget">
+        <div class="weather-item">
+            <div class="weather-icon-bg orange">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
             </div>
-            <div class="feature-item glass">
-                <span class="feature-icon">🏠</span>
-                <h3>Комфортные дома</h3>
-                <p>Все удобства, отопление и уютная атмосфера</p>
+            <div>
+                <p class="weather-temp">+24&deg;C</p>
+                <p class="weather-label">Ясно, без осадков</p>
             </div>
-            <div class="feature-item glass">
-                <span class="feature-icon">✨</span>
-                <h3>Незабываемые впечатления</h3>
-                <p>Баня, мангал, купель и многое другое</p>
+        </div>
+        <div class="weather-divider"></div>
+        <div class="weather-item">
+            <div>
+                <p class="weather-temp" style="text-align:right;">+18&deg;C</p>
+                <p class="weather-label" style="text-align:right;">Вода в озере</p>
+            </div>
+            <div class="weather-icon-bg blue">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Video / About Section -->
+<section class="video-section">
+    <div class="video-placeholder">
+        <svg class="svg-illustration" viewBox="0 0 400 600" preserveAspectRatio="xMidYMid slice">
+            <rect width="400" height="600" fill="#4a6b82"/>
+            <rect y="450" width="400" height="150" fill="#c2b29f"/>
+            <rect y="350" width="400" height="100" fill="#2a5a5b"/>
+            <circle cx="200" cy="400" r="50" fill="#3a8a8b" opacity="0.5"/>
+            <path d="M80 300 Q200 200 320 300Z" fill="#e8ded1"/>
+            <rect x="195" y="300" width="10" height="200" fill="#2c2c2c"/>
+            <path d="M120 470 L100 390 L140 380 L160 470Z" fill="#6b8e5c" opacity="0.7"/>
+        </svg>
+        <div class="video-overlay">
+            <button class="video-play-btn" onclick="alert('Видео скоро появится')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16" fill="currentColor"/></svg>
+                Смотреть видео
+            </button>
+        </div>
+    </div>
+    <div class="video-text">
+        <h2>Парк-отель &laquo;Морской глаз&raquo;</h2>
+        <h3>Дорогие гости!</h3>
+        <p>Наш эко-парк расположен на живописном берегу уникального озера Морской глаз, в самом сердце Республики Марий Эл.<br><br>Это место, где можно по-настоящему отключиться от городской суеты, насладиться изумрудной водой карстового провала и почувствовать ритм природы.</p>
+        <div class="video-actions">
+            <a href="#contacts" class="video-action-btn">Карта территории</a>
+            <a href="#houses" class="video-action-link">Подробнее</a>
+        </div>
+    </div>
+</section>
+
+<!-- Accommodation Section -->
+<section class="scroll-section" id="houses">
+    <div class="scroll-header">
+        <h2 class="section-title">Размещение</h2>
+        <a href="/#houses" class="scroll-all-link">
+            Все номера
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+    </div>
+    <div class="scroll-track" id="rooms-track">
+        {% for house in all_houses %}
+        <div class="scroll-card">
+            <div class="scroll-card-img">
+                {% if house.images and house.images|length > 0 %}
+                <img src="{{ house.images[0] }}" alt="{{ house.name }}" loading="lazy">
+                {% else %}
+                <svg viewBox="0 0 300 200"><rect width="300" height="200" fill="#dad7cd"/><rect y="100" width="300" height="100" fill="#a3b18a"/><rect x="75" y="40" width="150" height="130" fill="#fff"/><rect x="85" y="50" width="60" height="120" fill="#111" opacity="0.8"/><rect x="155" y="50" width="60" height="120" fill="#111" opacity="0.8"/></svg>
+                {% endif %}
+            </div>
+            <div class="scroll-card-body">
+                <h3 class="scroll-card-title">{{ house.name }}</h3>
+                <p class="scroll-card-desc">{{ house.short_desc }}</p>
+                <p class="scroll-card-price">от <strong>{{ house.price }}</strong> руб/сутки</p>
+                <button class="scroll-card-btn quick-book-btn" data-house-id="{{ house.id }}" data-house-name="{{ house.name }}">Забронировать</button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="scroll-nav">
+        <button class="scroll-nav-arrow" onclick="document.getElementById('rooms-track').scrollBy({left:-300,behavior:'smooth'})">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div class="scroll-nav-dots" id="room-dots">
+            {% for house in all_houses %}
+            <span class="scroll-nav-dot {% if loop.first %}active{% endif %}"></span>
+            {% endfor %}
+        </div>
+        <button class="scroll-nav-arrow" onclick="document.getElementById('rooms-track').scrollBy({left:300,behavior:'smooth'})">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+        <a href="/" class="scroll-nav-link">
+            Все номера
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+    </div>
+</section>
+
+<!-- Restaurant Section -->
+<div class="feature-card">
+    <div class="feature-card-img">
+        <svg class="svg-illustration" viewBox="0 0 300 200"><rect width="300" height="200" fill="#2b2d2f"/><circle cx="150" cy="100" r="70" fill="#f4f4f4"/><circle cx="150" cy="100" r="50" fill="#e0e0e0"/><path d="M130 90 Q150 70 170 90 T170 120 Q150 140 130 120Z" fill="#c25953"/><rect x="145" y="85" width="10" height="30" fill="#8ba870"/></svg>
+        <div class="feature-card-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 002-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 00-5 5v6c0 1.1.9 2 2 2h3Z"/><path d="M21 15v7"/></svg>
+        </div>
+    </div>
+    <div class="feature-card-body">
+        <h3>Панорамный ресторан</h3>
+        <p>Авторская кухня с акцентом на локальные фермерские продукты. Завтраки с видом на изумрудную гладь озера.</p>
+        <a href="#" class="feature-card-link" onclick="alert('Меню скоро появится'); return false;">Смотреть меню</a>
+    </div>
+</div>
+
+<!-- Special Offers Section -->
+<div class="full-section">
+    <h2 class="section-title">Спецпредложения</h2>
+    <div class="scroll-track">
+        <div class="scroll-card">
+            <div class="scroll-card-img">
+                <svg class="svg-illustration" viewBox="0 0 300 200"><rect width="300" height="200" fill="#4a5d23"/><rect y="130" width="300" height="70" fill="#2c303a"/><path d="M30 140 L50 110 L120 110 L140 140Z" fill="#f0f0f0"/><rect x="30" y="140" width="110" height="30" fill="#f0f0f0" rx="5"/><circle cx="50" cy="170" r="12" fill="#111"/><circle cx="120" cy="170" r="12" fill="#111"/><path d="M160 150 L180 100 L260 100 L280 150Z" fill="#fff"/><rect x="160" y="150" width="120" height="35" fill="#fff" rx="5"/><circle cx="185" cy="185" r="14" fill="#111"/><circle cx="255" cy="185" r="14" fill="#111"/></svg>
+            </div>
+            <div class="scroll-card-body">
+                <h3 class="scroll-card-title">Трансфер</h3>
+                <p class="scroll-card-desc">Комфортный трансфер от Йошкар-Олы до парк-отеля</p>
+                <a href="#" class="feature-card-link" onclick="alert('Скоро появится'); return false;">Подробнее</a>
+            </div>
+        </div>
+        <div class="scroll-card" style="opacity:0.5;">
+            <div class="scroll-card-img" style="background:var(--border);display:flex;align-items:center;justify-content:center;">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-muted)"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </div>
+            <div class="scroll-card-body">
+                <h3 class="scroll-card-title">Для фотосессий</h3>
+                <p class="scroll-card-desc">Аренда локаций для свадебных и индивидуальных съемок</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Reviews Section -->
+<section class="scroll-section">
+    <div class="scroll-header">
+        <h2 class="section-title">Отзывы гостей</h2>
+    </div>
+    <div class="scroll-track" id="reviews-track">
+        {% for review in all_reviews %}
+        <div class="review-card">
+            <div class="review-stars">
+                {% for i in range(review.rating) %}
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                {% endfor %}
+            </div>
+            <p class="review-text">&laquo;{{ review.text }}&raquo;</p>
+            <p class="review-author">{{ review.author }}</p>
+        </div>
+        {% else %}
+        <div class="review-card" style="min-width:200px;">
+            <p class="review-text">Будьте первым, кто оставит отзыв!</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Activities Section -->
+<section class="scroll-section">
+    <h2 class="section-title">Чем заняться</h2>
+    <div class="activities-grid">
+        <div class="activity-card">
+            <svg viewBox="0 0 300 130"><rect width="300" height="130" fill="#8fbc8f"/><path d="M200 130 L250 30 L300 130Z" fill="#2e8b57" opacity="0.4"/></svg>
+            <div class="activity-overlay"><h3>Круглый год</h3></div>
+        </div>
+        <div class="activity-card">
+            <svg viewBox="0 0 300 130"><rect width="300" height="130" fill="#b0c4de"/><circle cx="250" cy="40" r="20" fill="#fff" opacity="0.7"/></svg>
+            <div class="activity-overlay"><h3>Водные прогулки</h3></div>
+        </div>
+        <div class="activity-card">
+            <svg viewBox="0 0 300 130"><rect width="300" height="130" fill="#cd853f"/><path d="M50 110 L50 50 L55 50 L55 110Z" fill="#8B4513"/><path d="M40 110 L70 110" stroke="#8B4513" stroke-width="3"/><circle cx="55" cy="40" r="5" fill="#fff"/></svg>
+            <div class="activity-overlay"><h3>Рыбалка</h3></div>
+        </div>
+        <div class="activity-card">
+            <svg viewBox="0 0 300 130"><rect width="300" height="130" fill="#ffebcd"/><circle cx="50" cy="40" r="25" fill="#ffd700" opacity="0.7"/><path d="M70 45 L90 45" stroke="#ff8c00" stroke-width="3"/></svg>
+            <div class="activity-overlay"><h3>Летний сезон</h3></div>
+        </div>
+        <div class="activity-card">
+            <svg viewBox="0 0 300 130"><rect width="300" height="130" fill="#dda0dd"/><circle cx="150" cy="40" r="15" fill="#fff" opacity="0.7"/><circle cx="150" cy="80" r="15" fill="#fff" opacity="0.7"/></svg>
+            <div class="activity-overlay"><h3>Мероприятия</h3></div>
+        </div>
+    </div>
+</section>
+
+<!-- Corporate Section -->
+<section class="corporate-section">
+    <h2 class="section-title">Корпоративным клиентам</h2>
+    <div class="corporate-card">
+        <svg class="svg-illustration" viewBox="0 0 400 500"><rect width="400" height="500" fill="#3a5a40"/><rect y="350" width="400" height="150" fill="#588157"/><rect x="100" y="200" width="200" height="200" fill="#dad7cd"/><rect x="120" y="220" width="70" height="180" fill="#111" opacity="0.8"/><rect x="210" y="220" width="70" height="180" fill="#111" opacity="0.8"/></svg>
+        <div class="corporate-overlay">
+            <h3>Стратегическая сессия:<br>Перезагрузка у воды</h3>
+            <p>Масштабные решения требуют особой обстановки. Вырвитесь из повседневной суеты в место, где рождаются большие идеи.</p>
+            <a href="#" class="corporate-link" onclick="alert('Скоро появится'); return false;">Все мероприятия</a>
+        </div>
+    </div>
+</section>
+
+<!-- Gallery Section -->
+<section class="gallery-section">
+    <div class="gallery-header">
+        <h2 class="section-title">Галерея</h2>
+        <span class="gallery-tag">@morskoy_glaz</span>
+    </div>
+    <div class="gallery-grid">
+        <div class="gallery-grid-item">
+            <svg class="svg-illustration" viewBox="0 0 300 300"><rect width="300" height="300" fill="#4a6b82"/><rect y="200" width="300" height="100" fill="#c2b29f"/><rect y="150" width="300" height="50" fill="#2a5a5b"/><path d="M60 120 Q200 60 340 120Z" fill="#e8ded1"/></svg>
+        </div>
+        <div class="gallery-grid-item">
+            <svg class="svg-illustration" viewBox="0 0 300 300"><rect width="300" height="300" fill="#4c5c44"/><rect y="200" width="300" height="100" fill="#3a4a33"/><path d="M150 80 L40 200 L260 200Z" fill="#e8ded1"/><path d="M150 80 L110 200 L190 200Z" fill="#111" opacity="0.5"/></svg>
+        </div>
+        <div class="gallery-grid-item">
+            <svg class="svg-illustration" viewBox="0 0 300 300"><rect width="300" height="300" fill="#2b2d2f"/><circle cx="150" cy="150" r="70" fill="#f4f4f4"/><path d="M130 140 Q150 120 170 140 T170 170 Q150 190 130 170Z" fill="#c25953"/></svg>
+        </div>
+        <div class="gallery-grid-item">
+            <svg class="svg-illustration" viewBox="0 0 300 300"><rect width="300" height="300" fill="#5c3a21"/><circle cx="150" cy="150" r="80" fill="#8b5a33"/><circle cx="150" cy="150" r="30" fill="#2c1a0f"/><rect x="140" y="30" width="20" height="120" fill="#4a2c17"/></svg>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="faq-section">
+    <h2 class="section-title">Часто задаваемые вопросы</h2>
+    <div class="faq-list">
+        {% set faqs = [
+            {"q": "Есть ли мангал?", "a": "Да, у каждого дома есть своя мангальная зона со всем необходимым."},
+            {"q": "Можно ли купаться в озере?", "a": "Озеро карстовое и глубокое, вода прохладная, но для закаленных гостей оборудован специальный понтон."},
+            {"q": "Можно ли будет заказать питание?", "a": "У нас работает панорамный ресторан с доставкой блюд прямо в ваш дом."},
+            {"q": "Какие условия размещения с детьми?", "a": "Дети до 7 лет размещаются бесплатно. Есть детская площадка и игровая комната."},
+            {"q": "К вам можно с животными?", "a": "Да, мы dog-friendly отель! Проживание питомца стоит 1500 руб/сутки."}
+        ] %}
+        {% for faq in faqs %}
+        <div class="faq-item">
+            <button class="faq-question" onclick="toggleFaq(this)">
+                <span>{{ faq.q }}</span>
+                <svg class="faq-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </button>
+            <div class="faq-answer" style="display:none;">{{ faq.a }}</div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- Contacts Section -->
+<section class="contacts-section" id="contacts">
+    <h2 class="section-title">Контакты</h2>
+    <div class="contacts-card">
+        <div class="contacts-map">
+            <iframe src="https://yandex.ru/map-widget/v1/?ll=48.7600%2C56.1628&z=15&l=map&pt=48.7600%2C56.1628%2Cpm2rdl" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            <a href="https://yandex.ru/maps/?pt=48.7600,56.1628&z=15&l=map" target="_blank" class="contacts-map-link">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="#ef4444" stroke="none"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3" fill="white"/></svg>
+                Как добраться
+            </a>
+            <div class="contacts-map-zoom">
+                <button class="map-zoom-btn" onclick="alert('Приблизить')">+</button>
+                <button class="map-zoom-btn" onclick="alert('Отдалить')">-</button>
+            </div>
+        </div>
+        <div class="contacts-details">
+            <div class="contact-row">
+                <div class="contact-row-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                </div>
+                <div class="contact-row-text">Марий Эл, Волжский район, озеро Морской глаз<br><br>56.0954, 48.7562</div>
+            </div>
+            <div class="contact-row">
+                <div class="contact-row-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.362 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+                </div>
+                <a href="tel:+79370000000" class="contact-row-text">+7 (937) 000-00-00</a>
+            </div>
+            <div class="contact-row">
+                <div class="contact-row-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                </div>
+                <a href="mailto:hello@sotnur.ru" class="contact-row-text">hello@sotnur.ru</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% if filter_applied and all_houses|length == 0 %}
+<div class="no-results">
+    <span class="no-results-icon">&#128270;</span>
+    <h3>Домов по вашим критериям не найдено</h3>
+    <p>Попробуйте изменить параметры поиска</p>
+    <a href="/" class="btn-outline" style="display:inline-block;padding:12px 24px;">Сбросить фильтры</a>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Hero slide switching
+var heroSlide = 0;
+var heroDots = document.querySelectorAll('.hero-dot');
+var heroBg = document.getElementById('hero-bg');
+var heroTitle = document.getElementById('hero-title');
+var heroDesc = document.getElementById('hero-desc');
+var heroSection = document.getElementById('hero');
+
+var slides = [
+    { title: 'Дневное пребывание', desc: 'Отдых на изумрудном берегу озера Морской глаз.' },
+    { title: 'Вечер у костра', desc: 'Наслаждаемся музыкой и поем песни под гитару' }
+];
+
+function switchHeroSlide(idx) {
+    heroSlide = idx;
+    heroTitle.textContent = slides[idx].title;
+    heroDesc.textContent = slides[idx].desc;
+    heroDots.forEach(function(d, i) { d.classList.toggle('active', i === idx); });
+}
+
+if (heroSection) {
+    heroSection.addEventListener('click', function() { switchHeroSlide(heroSlide === 0 ? 1 : 0); });
+}
+
+heroDots.forEach(function(dot, i) {
+    dot.addEventListener('click', function(e) { e.stopPropagation(); switchHeroSlide(i); });
+});
+
+// FAQ toggle
+function toggleFaq(btn) {
+    var answer = btn.nextElementSibling;
+    var icon = btn.querySelector('.faq-icon');
+    if (answer.style.display === 'none') {
+        answer.style.display = 'block';
+        icon.innerHTML = '<line x1="5" y1="12" x2="19" y2="12"/>';
+    } else {
+        answer.style.display = 'none';
+        icon.innerHTML = '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>';
+    }
+}
+
+// Custom select for guests
+(function() {
+    var triggers = document.querySelectorAll('.select-trigger');
+    var dropdowns = document.querySelectorAll('.select-dropdown');
+
+    triggers.forEach(function(t, i) {
+        t.addEventListener('click', function(e) {
+            e.stopPropagation();
+            dropdowns.forEach(function(d, j) {
+                if (j !== i) d.style.display = 'none';
+            });
+            var dd = dropdowns[i];
+            dd.style.display = dd.style.display === 'none' ? 'block' : 'none';
+        });
+    });
+
+    document.querySelectorAll('.select-option').forEach(function(opt) {
+        opt.addEventListener('click', function() {
+            var parent = this.closest('.custom-select');
+            var trigger = parent.querySelector('.select-trigger');
+            var input = parent.querySelector('input');
+            input.value = this.dataset.value;
+            trigger.textContent = this.textContent;
+            parent.querySelector('.select-dropdown').style.display = 'none';
+        });
+    });
+
+    document.addEventListener('click', function() {
+        dropdowns.forEach(function(d) { d.style.display = 'none'; });
+    });
+})();
+
+// Rooms scroll dot sync
+var roomsTrack = document.getElementById('rooms-track');
+if (roomsTrack) {
+    roomsTrack.addEventListener('scroll', function() {
+        var dots = document.querySelectorAll('#room-dots .scroll-nav-dot');
+        var cardWidth = roomsTrack.querySelector('.scroll-card');
+        if (cardWidth) {
+            var idx = Math.round(roomsTrack.scrollLeft / (cardWidth.offsetWidth + 16));
+            dots.forEach(function(d, i) { d.classList.toggle('active', i === idx); });
+        }
+    });
+}
+
+// Load more reviews if needed
+var reviewsTrack = document.getElementById('reviews-track');
+if (reviewsTrack && reviewsTrack.children.length === 0) {
+    reviewsTrack.innerHTML = '<div class="review-card" style="min-width:200px;"><p class="review-text">Пока нет отзывов</p></div>';
+}
+</script>
 {% endblock %}

@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block title %}Морской Глаз — Дома в Марий Эл | Забронировать{% endblock %}
+
+{% block content %}
+<!-- Hero секция -->
+<section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-overlay"></div>
+    <div class="container hero-content">
+        <h1 class="hero-title">Отдых на природе<br>в сердце Марий Эл</h1>
+        <p class="hero-subtitle">Дома и шале в Сотнуре — забронируйте идеальное место для отдыха</p>
+        <a href="#houses" class="btn btn-primary btn-large">Смотреть варианты</a>
+    </div>
+    <div class="hero-scroll">
+        <span>Прокрутите вниз</span>
+        <div class="scroll-arrow"></div>
+    </div>
+</section>
+
+<!-- Виджет бронирования -->
+<section class="booking-widget" id="booking-widget">
+    <div class="container">
+        <div class="widget-card glass">
+            <h2 class="widget-title">Найдите идеальный дом</h2>
+            <form method="GET" action="/" class="widget-form" id="booking-form">
+                <div class="widget-row">
+                    <div class="widget-field">
+                        <label>Заезд</label>
+                        <div class="airbnb-calendar-widget" id="checkin-widget">
+                            <input type="hidden" id="checkin" name="checkin" value="{{ checkin or '' }}">
+                            <div class="calendar-trigger-widget" id="checkin-trigger" data-target="checkin">{{ checkin or 'Выберите дату' }}</div>
+                            <div class="calendar-dropdown-widget" id="checkin-dropdown">
+                                <div class="cal-header">
+                                    <button type="button" class="cal-btn" onclick="widgetCalPrev('checkin')">←</button>
+                                    <span class="cal-my" id="checkin-my"></span>
+                                    <button type="button" class="cal-btn" onclick="widgetCalNext('checkin')">→</button>
+                                </div>
+                                <div class="cal-week"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div>
+                                <div class="cal-days-widget" id="checkin-days"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="widget-field">
+                        <label>Выезд</label>
+                        <div class="airbnb-calendar-widget" id="checkout-widget">
+                            <input type="hidden" id="checkout" name="checkout" value="{{ checkout or '' }}">
+                            <div class="calendar-trigger-widget" id="checkout-trigger" data-target="checkout">{{ checkout or 'Выберите дату' }}</div>
+                            <div class="calendar-dropdown-widget" id="checkout-dropdown">
+                                <div class="cal-header">
+                                    <button type="button" class="cal-btn" onclick="widgetCalPrev('checkout')">←</button>
+                                    <span class="cal-my" id="checkout-my"></span>
+                                    <button type="button" class="cal-btn" onclick="widgetCalNext('checkout')">→</button>
+                                </div>
+                                <div class="cal-week"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div>
+                                <div class="cal-days-widget" id="checkout-days"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="widget-field">
+                        <label>Гости</label>
+                        <div class="custom-select" id="guests-select">
+                            <input type="hidden" id="guests" name="guests" value="{{ guests or '' }}">
+                            <div class="select-trigger" id="guests-trigger">{% set guests_int = guests|default('')|int %}{% if guests_int == 0 %}Сколько гостей?{% elif guests_int < 7 %}{{ guests_int }} гостей{% else %}7+ гостей{% endif %}</div>
+                            <div class="select-dropdown">
+                                <div class="select-option" data-value="">Сколько гостей?</div>
+                                <div class="select-option" data-value="1">1 гость</div>
+                                <div class="select-option" data-value="2">2 гостя</div>
+                                <div class="select-option" data-value="3">3 гостя</div>
+                                <div class="select-option" data-value="4">4 гостя</div>
+                                <div class="select-option" data-value="5">5 гостей</div>
+                                <div class="select-option" data-value="6">6 гостей</div>
+                                <div class="select-option" data-value="7">7+ гостей</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="widget-field">
+                        <label for="promo">Промокод</label>
+                        <input type="text" id="promo" name="promo" value="{{ promo or '' }}" placeholder="Есть промокод?">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-large btn-full-mobile">Найти дом</button>
+            </form>
+            {% if discount > 0 %}
+            <div class="widget-discount">🎉 Применена скидка {{ discount }}%!</div>
+            {% endif %}
+            {% if filter_applied %}
+            <div class="widget-result">
+                Найдено <strong>{{ houses|length }}</strong> домов по вашим критериям
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<!-- Карточки домов -->
+<section class="houses" id="houses">
+    <div class="container">
+        <h2 class="section-title">Наши дома</h2>
+        <p class="section-subtitle">Выберите идеальное место для вашего отдыха</p>
+        
+        <div class="houses-grid">
+            {% for house in all_houses %}
+            <article class="house-card glass" data-house-id="{{ house.id }}" data-max-guests="{{ house.max_guests }}">
+                {% if house.images %}
+                <div class="house-carousel">
+                    <div class="carousel-images">
+                        {% for img in house.images %}
+                        <img src="{{ img }}" alt="{{ house.name }}" class="carousel-img" loading="lazy" {% if loop.first %}fetchpriority="high"{% endif %}>
+                        {% endfor %}
+                    </div>
+                    <button class="carousel-btn carousel-prev" aria-label="Назад">❮</button>
+                    <button class="carousel-btn carousel-next" aria-label="Вперёд">❯</button>
+                    <div class="carousel-dots">
+                        {% for img in house.images %}
+                        <span class="carousel-dot {% if loop.first %}active{% endif %}"></span>
+                        {% endfor %}
+                        {% if house.images|length == 1 %}<style>.house-carousel .carousel-btn, .house-carousel .carousel-dots { display: none !important; }</style>{% endif %}
+                    </div>
+                </div>
+                {% endif %}
+                
+                <div class="house-content">
+                    <h3 class="house-name">{{ house.name }}</h3>
+                    <p class="house-desc">{{ house.short_desc }}</p>
+                    
+                    <div class="house-meta">
+                        <span class="meta-item">
+                            <span class="meta-icon">👥</span>
+                            до {{ house.max_guests }} гостей
+                        </span>
+                        <span class="meta-item">
+                            <span class="meta-icon">💰</span>
+                            {% if house.min_price and house.min_price < house.price %}от {{ house.min_price }} ₽{% else %}{{ house.price }} ₽/ночь{% endif %}
+                        </span>
+                    </div>
+                    
+                    <div class="house-amenities">
+                        {% for amenity in house.amenities[:4] %}
+                        <span class="amenity-tag">{{ amenity }}</span>
+                        {% endfor %}
+                        {% if house.amenities|length > 4 %}
+                        <span class="amenity-more">+{{ house.amenities|length - 4 }}</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="house-actions">
+                        <a href="/house/{{ house.id }}" class="btn btn-outline">Подробнее</a>
+                        <button class="btn btn-primary quick-book-btn" data-house-id="{{ house.id }}" data-house-name="{{ house.name }}">Бронировать</button>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        
+        {% if houses|length == 0 and filter_applied %}
+        <div class="no-results">
+            <span class="no-results-icon">🔍</span>
+            <h3>Домов по вашим критериям не найдено</h3>
+            <p>Попробуйте изменить параметры поиска или забронировать в другой период</p>
+            <a href="/" class="btn btn-outline">Сбросить фильтры</a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Почему выбирают нас -->
+<section class="features">
+    <div class="container">
+        <div class="features-grid">
+            <div class="feature-item glass">
+                <span class="feature-icon">🌲</span>
+                <h3>Природа Марий Эл</h3>
+                <p>Сосновые леса, чистые озёра и свежий воздух</p>
+            </div>
+            <div class="feature-item glass">
+                <span class="feature-icon">🏠</span>
+                <h3>Комфортные дома</h3>
+                <p>Все удобства, отопление и уютная атмосфера</p>
+            </div>
+            <div class="feature-item glass">
+                <span class="feature-icon">✨</span>
+                <h3>Незабываемые впечатления</h3>
+                <p>Баня, мангал, купель и многое другое</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

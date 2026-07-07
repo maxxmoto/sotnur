@@ -4,160 +4,84 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Морской Глаз — Дома в Марий Эл{% endblock %}</title>
-    
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="Аренда домов и шале в Сотнуре, Марий Эл. Уютные места для отдыха на природе. Забронировать дом на берегу озера.">
-    <meta name="keywords" content="аренда дома, отдых на природе, Марий Эл, Сотнур, шале, коттедж, бронирование, баня, мангал">
-    <meta name="author" content="Морской Глаз">
+    <meta name="description" content="Аренда домов и шале в Сотнуре, Марий Эл. Уютные места для отдыха на природе.">
+    <meta name="keywords" content="аренда дома, отдых на природе, Марий Эл, Сотнур, шале, коттедж, бронирование">
     <meta name="robots" content="index, follow">
-    <meta name="language" content="Russian">
-    
-    <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="Морской Глаз — Дома в Марий Эл">
     <meta property="og:description" content="Уютные дома в Сотнуре. Отдых на природе с комфортом.">
     <meta property="og:url" content="https://sotnur.ru">
-    <meta property="og:image" content="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200">
     <meta property="og:site_name" content="Морской Глаз">
-    
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Морской Глаз — Дома в Марий Эл">
-    <meta name="twitter:description" content="Уютные дома в Сотнуре. Отдых на природе с комфортом.">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏔️</text></svg>">
-    
-    <!-- Canonical -->
-    <link rel="canonical" href="https://sotnur.ru">
-    
-    <!-- Browser & PWA Meta -->
-    <meta name="theme-color" content="#5a8a6b">
+    <meta name="theme-color" content="#6b8e5c">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Морской Глаз">
-    <meta name="format-detection" content="telephone=yes">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="msapplication-TileColor" content="#5a8a6b">
-    <meta name="msapplication-navbutton-color" content="#5a8a6b">
-    <meta name="application-name" content="Морской Глаз">
-    <link rel="apple-touch-icon" sizes="180x180" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🏔️%3C/text%3E%3C/svg%3E">
-    
-    <!-- Preconnect -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏔️</text></svg>">
+    <link rel="canonical" href="https://sotnur.ru">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=20260523">
-    
+    <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}?v=20260701">
     {% block extra_head %}{% endblock %}
 </head>
 <body>
-    <!-- Шапка сайта -->
-    <header class="header" id="header">
-        <div class="container header-container">
-            <a href="/" class="logo">
-                <span class="logo-icon"></span>
-                <span class="logo-text">Морской<br><strong>Глаз</strong></span>
-            </a>
-            
-            <nav class="nav" id="nav">
-                <a href="/" class="nav-link">Главная</a>
-                <a href="#houses" class="nav-link">Дома</a>
-                <a href="#contacts" class="nav-link">Контакты</a>
-            </nav>
-            
-            <a href="#booking-widget" class="btn btn-primary">Забронировать</a>
-            
-            <button class="menu-toggle" id="menu-toggle" aria-label="Открыть меню">
-                <span></span>
-                <span></span>
-                <span></span>
+    <!-- Header -->
+    <header class="header">
+        <a href="/" class="header-logo">
+            <div class="logo-eye">
+                <div class="logo-eye-inner"><div class="logo-eye-pupil"></div></div>
+            </div>
+            <span class="logo-text">Морской глаз</span>
+        </a>
+        <div class="header-actions">
+            <button class="header-icon-btn" onclick="window.open('https://t.me/...', '_blank')" aria-label="Telegram">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>
+            </button>
+            <button class="header-icon-btn" onclick="window.open('https://vk.com/...', '_blank')" aria-label="VK">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6C4 4 6 4 12 4C18 4 20 4 20 6"/><path d="M4 12C4 14 6 14 12 14C18 14 20 14 20 12"/><path d="M4 18C4 20 6 20 12 20C18 20 20 20 20 18"/></svg>
+            </button>
+            <button class="header-icon-btn" onclick="window.open('https://wa.me/79370000000', '_blank')" aria-label="WhatsApp">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5C21 16.75 16.75 21 11.5 21C9.5 21 7.2 20.2 5.5 18.8L3 19.5L3.7 17C2.3 15.2 1.5 12.8 1.5 10.5C1.5 5.25 5.75 1 11 1C16.25 1 20.5 5.25 20.5 10.5V11.5"/><path d="M8 8H14M8 12H11M8 16H12"/></svg>
+            </button>
+            <button class="header-menu-btn" id="menu-toggle" aria-label="Меню">
+                <div class="menu-dots-grid">
+                    {% for i in range(9) %}<div class="menu-dot"></div>{% endfor %}
+                </div>
             </button>
         </div>
     </header>
 
     <div class="header-spacer"></div>
 
-    <!-- Основной контент -->
-    <main>
-        {% block content %}{% endblock %}
-    </main>
+    <!-- Main Content -->
+    <main>{% block content %}{% endblock %}</main>
 
-    <!-- Контакты и карта -->
-    <section class="contacts" id="contacts">
-        <div class="container">
-            <div class="contacts-grid">
-                <div class="contacts-info">
-                    <h2 class="section-title">Контакты</h2>
-                    <p class="contacts-desc">Ждём вас в гости в живописном месте Марий Эл</p>
-                    
-                    <div class="contact-items">
-                        <div class="contact-item">
-                            <span class="contact-icon">📍</span>
-                            <div>
-                                <strong>Адрес</strong>
-                                <span>с. Сотнур, Республика Марий Эл</span>
-                            </div>
-                        </div>
-                        <div class="contact-item">
-                            <span class="contact-icon">📞</span>
-                            <div>
-                                <strong>Телефон</strong>
-                                <a href="tel:+79370000000">+7 (937) 000-00-00</a>
-                            </div>
-                        </div>
-                        <div class="contact-item">
-                            <span class="contact-icon">✉️</span>
-                            <div>
-                                <strong>Email</strong>
-                                <a href="mailto:hello@sotnur.ru">hello@sotnur.ru</a>
-                            </div>
-                        </div>
-                        <div class="contact-item">
-                            <span class="contact-icon">📱</span>
-                            <div>
-                                <strong>Соцсети</strong>
-                                <div class="social-links">
-                                    <a href="#" class="social-link">Telegram</a>
-                                    <a href="#" class="social-link">Instagram</a>
-                                </div>
-                            </div>
-                        </div>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-logo">
+                <div class="logo-eye" style="width:24px;height:24px;">
+                    <div class="logo-eye-inner" style="width:14px;height:8px;border-top-width:1px;border-bottom-width:1px;">
+                        <div class="logo-eye-pupil" style="width:4px;height:4px;"></div>
                     </div>
                 </div>
-                
-                <div class="contacts-map">
-                    <iframe 
-                        src="https://yandex.ru/map-widget/v1/?ll=48.7600%2C56.1628&z=15&l=map&pt=48.7600%2C56.1628%2Cpm2rdl"
-                        width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy">
-                    </iframe>
-                </div>
+                <span class="logo-text" style="font-size:14px;letter-spacing:1px;">Морской глаз</span>
             </div>
-        </div>
-    </section>
-
-    <!-- Футер -->
-    <footer class="footer">
-        <div class="container footer-container">
-            <div class="footer-logo">
-                <span class="logo-icon"></span>
-                <span class="logo-text">Морской Глаз</span>
-            </div>
-            <p class="footer-text">© 2026 Дома в Сотнуре. Все права защищены.</p>
+            <p class="footer-copy">&copy; 2026 Дома в Сотнуре. Все права защищены.</p>
             <p class="footer-tagline">Отдых на природе в Марий Эл</p>
-            <p class="footer-legal">
-                <a href="#" onclick="showPrivacy(event)">Политика персональных данных</a>
-                &nbsp;|&nbsp;
-                <a href="#" onclick="showTerms(event)">Правила бронирования</a>
+            <p class="footer-links">
+                <a href="{{ url_for('privacy') }}">Политика персональных данных</a><br>
+                <a href="{{ url_for('terms') }}">Правила бронирования</a><br>
+                <a href="#" onclick="openCookieSettings(); return false;">Настроить cookies</a>
             </p>
-            <p class="footer-legal">ИП «ФИО» · ИНН __________ · ОГРНИП __________</p>
+            <p class="footer-links" style="margin-top:8px;">ИП «ФИО» · ИНН __________ · ОГРНИП __________</p>
         </div>
     </footer>
 
-    <!-- Модальное окно быстрого бронирования -->
+    <!-- Booking Modal -->
     <div class="modal" id="booking-modal">
         <div class="modal-content">
-            <button class="modal-close" id="modal-close" aria-label="Закрыть">&times;</button>
+            <button class="modal-close" id="modal-close">&times;</button>
             <h3 class="modal-title">Быстрое бронирование</h3>
             <p class="modal-subtitle" id="modal-house-name"></p>
             <form method="POST" action="/book" class="booking-form" id="quick-book-form">
@@ -208,16 +132,16 @@
                     <input type="checkbox" id="modal-consent" required>
                     <label for="modal-consent">Я согласен на <a href="#" onclick="showPrivacy(event)">обработку персональных данных</a> и принимаю <a href="#" onclick="showTerms(event)">правила бронирования</a></label>
                 </div>
-                <button type="submit" class="btn btn-primary btn-full" id="modal-submit-btn" disabled>Отправить заявку</button>
+                <button type="submit" class="btn-primary btn-full" id="modal-submit-btn" disabled>Отправить заявку</button>
             </form>
-            <div class="modal-loading" id="modal-loading" style="display: none;">
+            <div class="modal-loading" id="modal-loading" style="display:none;">
                 <div class="loading-spinner"></div>
                 <p class="loading-text">Открываем книгу бронирований<span class="loading-dots"></span></p>
             </div>
-            <div class="modal-success" id="modal-success" style="display: none;">
-                <span class="success-icon">✅</span>
-                <h4>Заявка отправлена!</h4>
-                <p>Мы свяжемся с вами в ближайшее время</p>
+            <div class="modal-success" id="modal-success" style="display:none;">
+                <span style="font-size:40px;">✅</span>
+                <h4 style="margin-top:8px;">Заявка отправлена!</h4>
+                <p style="font-size:14px;color:var(--text-light);">Мы свяжемся с вами в ближайшее время</p>
             </div>
         </div>
     </div>
@@ -227,71 +151,189 @@
     <!-- Cookie Banner -->
     <div class="cookie-banner" id="cookie-banner">
         <div class="cookie-icon">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="12" r="10" fill="#d4c4a8"/>
-                <circle cx="8" cy="9" r="1.5" fill="#b8a888"/>
-                <circle cx="16" cy="8" r="1.5" fill="#b8a888"/>
-                <circle cx="12" cy="14" r="2" fill="#b8a888"/>
-                <circle cx="9" cy="16" r="1" fill="#b8a888"/>
-                <circle cx="15" cy="15" r="1" fill="#b8a888"/>
-            </svg>
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="#d4c4a8"/><circle cx="8" cy="9" r="1.5" fill="#b8a888"/><circle cx="16" cy="8" r="1.5" fill="#b8a888"/><circle cx="12" cy="14" r="2" fill="#b8a888"/><circle cx="9" cy="16" r="1" fill="#b8a888"/><circle cx="15" cy="15" r="1" fill="#b8a888"/></svg>
         </div>
         <div class="cookie-text">
-            <p>Мы используем cookies для улучшения работы сайта. Продолжая, вы соглашаетесь с <a href="#" onclick="showPrivacy(event)">политикой обработки персональных данных</a>.</p>
+            <p>Мы используем cookies. <a href="#" onclick="showPrivacy(event)">Подробнее</a></p>
         </div>
-        <button class="cookie-btn" onclick="acceptCookies()">Принять</button>
+        <div class="cookie-actions">
+            <button class="cookie-btn cookie-btn-reject" onclick="rejectCookies()">Отклонить</button>
+            <button class="cookie-btn cookie-btn-settings" onclick="openCookieSettings()">Настроить</button>
+            <button class="cookie-btn cookie-btn-accept" onclick="acceptCookies()">Принять все</button>
+        </div>
+    </div>
+
+    <!-- Cookie Settings Modal -->
+    <div class="legal-modal" id="cookie-settings-modal">
+        <div class="legal-modal-content">
+            <button class="legal-modal-close" onclick="closeCookieSettings()">&times;</button>
+            <h2>Настройка cookies</h2>
+            <p class="legal-subtitle">Выберите, какие cookies вы разрешаете</p>
+            <div class="cookie-option">
+                <div class="cookie-option-info">
+                    <strong>Необходимые</strong>
+                    <p>Обеспечивают корректную работу сайта: сессия, бронирование, защита от CSRF. Отключить нельзя.</p>
+                </div>
+                <label class="toggle toggle-disabled">
+                    <input type="checkbox" checked disabled>
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <div class="cookie-option">
+                <div class="cookie-option-info">
+                    <strong>Аналитические</strong>
+                    <p>Помогают улучшать сайт: статистика посещений, поведение пользователей. В настоящее время не используются.</p>
+                </div>
+                <label class="toggle" id="analytics-toggle-wrap">
+                    <input type="checkbox" id="analytics-toggle">
+                    <span class="toggle-slider"></span>
+                </label>
+            </div>
+            <div class="cookie-actions-settings">
+                <button class="cookie-btn cookie-btn-reject" onclick="rejectCookies(); closeCookieSettings();">Отклонить все</button>
+                <button class="cookie-btn cookie-btn-accept" onclick="saveCookieSettings(); closeCookieSettings();">Сохранить настройки</button>
+            </div>
+        </div>
     </div>
 
     <!-- Legal Modal -->
     <div class="legal-modal" id="legal-modal">
         <div class="legal-modal-content">
-            <button class="legal-modal-close" onclick="closeLegalModal()">×</button>
+            <button class="legal-modal-close" onclick="closeLegalModal()">&times;</button>
             <div id="legal-modal-content"></div>
         </div>
+    </div>
+
+    <!-- Floating Chat Button -->
+    <button class="floating-chat" id="floating-chat" onclick="window.open('https://wa.me/79370000000', '_blank')" aria-label="Чат" style="bottom:80px;">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5C21 16.75 16.75 21 11.5 21C9.5 21 7.2 20.2 5.5 18.8L3 19.5L3.7 17C2.3 15.2 1.5 12.8 1.5 10.5C1.5 5.25 5.75 1 11 1C16.25 1 20.5 5.25 20.5 10.5V11.5"/><path d="M8 8H14M8 12H11M8 16H12"/></svg>
+    </button>
+
+    <!-- Sticky Bottom Bar -->
+    <div class="sticky-bar hidden" id="sticky-bar">
+        <div>
+            <p class="sticky-bar-label">Ваш отдых ждет</p>
+            <p class="sticky-bar-price">от 9 500 &#8381;</p>
+        </div>
+        <button class="sticky-bar-btn" onclick="document.getElementById('booking-widget')?.scrollIntoView({behavior:'smooth'})">Забронировать</button>
     </div>
 
     <script src="{{ url_for('static', filename='main.js') }}"></script>
     <script>
     function showNotification(message, type) {
-        const container = document.getElementById('notification-container');
-        const notification = document.createElement('div');
-        notification.className = 'notification notification-' + type;
-        notification.innerHTML = '<span class="notification-icon">' + (type === 'success' ? '✓' : type === 'error' ? '✕' : 'ℹ') + '</span><span class="notification-text">' + message + '</span>';
-        container.appendChild(notification);
-        setTimeout(function() {
-            notification.classList.add('show');
-        }, 10);
-        setTimeout(function() {
-            notification.classList.remove('show');
-            setTimeout(function() {
-                notification.remove();
-            }, 300);
-        }, 4000);
+        var c = document.getElementById('notification-container');
+        var n = document.createElement('div');
+        n.className = 'notification notification-' + type;
+        n.innerHTML = '<span class="notification-icon">' + (type === 'success' ? '&#10003;' : type === 'error' ? '&#10005;' : '&#8505;') + '</span><span class="notification-text">' + message + '</span>';
+        c.appendChild(n);
+        setTimeout(function(){ n.classList.add('show'); }, 10);
+        setTimeout(function(){ n.classList.remove('show'); setTimeout(function(){ n.remove(); }, 300); }, 4000);
     }
 
     {% if flash_message %}
     showNotification('{{ flash_message.text }}', '{{ flash_message.type }}');
     {% endif %}
 
-    // Cookie Banner
+    // ---- Cookie Banner ----
+    function setCookie(name, value, days) {
+        var d = new Date();
+        d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
+        document.cookie = name + '=' + value + '; path=/; max-age=' + (days * 24 * 60 * 60);
+    }
+
+    function getCookie(name) {
+        return document.cookie.indexOf(name + '=') !== -1;
+    }
+
     function acceptCookies() {
-        document.cookie = 'cookies_accepted=1; path=/; max-age=' + (365 * 24 * 60 * 60);
+        setCookie('cookies_accepted', '1', 365);
         localStorage.setItem('cookies_accepted', '1');
+        localStorage.removeItem('cookies_rejected');
         document.getElementById('cookie-banner').style.display = 'none';
     }
-    
-    // Показать баннер через 2 секунды если не принято (проверяем и cookie и localStorage)
+
+    function rejectCookies() {
+        setCookie('cookies_rejected', '1', 365);
+        localStorage.setItem('cookies_rejected', '1');
+        localStorage.removeItem('cookies_accepted');
+        document.getElementById('cookie-banner').style.display = 'none';
+        closeCookieSettings();
+    }
+
+    function showCookieBanner() {
+        var b = document.getElementById('cookie-banner');
+        if (b) b.style.display = 'flex';
+    }
+
+    function hideCookieBanner() {
+        var b = document.getElementById('cookie-banner');
+        if (b) b.style.display = 'none';
+    }
+
+    function openCookieSettings() {
+        hideCookieBanner();
+        var m = document.getElementById('cookie-settings-modal');
+        if (m) m.style.display = 'flex';
+        var a = localStorage.getItem('cookies_analytics');
+        var t = document.getElementById('analytics-toggle');
+        if (t && a === '1') t.checked = true;
+    }
+
+    function closeCookieSettings() {
+        document.getElementById('cookie-settings-modal').style.display = 'none';
+        if (!getCookie('cookies_accepted') && !getCookie('cookies_rejected')) showCookieBanner();
+    }
+
+    function saveCookieSettings() {
+        var a = document.getElementById('analytics-toggle').checked ? '1' : '0';
+        localStorage.setItem('cookies_analytics', a);
+        setCookie('cookies_accepted', '1', 365);
+        localStorage.setItem('cookies_accepted', '1');
+        localStorage.removeItem('cookies_rejected');
+        hideCookieBanner();
+    }
+
     setTimeout(function() {
-        var accepted = document.cookie.includes('cookies_accepted') || localStorage.getItem('cookies_accepted');
-        if (!accepted) {
-            var banner = document.getElementById('cookie-banner');
-            if (banner) {
-                banner.style.display = 'flex';
+        if (!getCookie('cookies_accepted') && !getCookie('cookies_rejected')) showCookieBanner();
+    }, 1500);
+
+    // ---- Sticky Bar Scroll ----
+    window.addEventListener('scroll', function() {
+        var bar = document.getElementById('sticky-bar');
+        if (bar) {
+            if (window.scrollY > 400) {
+                bar.classList.remove('hidden');
+            } else {
+                bar.classList.add('hidden');
             }
         }
-    }, 2000);
-    
-    // Чекбокс согласия - активация кнопки
+    });
+
+    // ---- Legal Modals ----
+    function showPrivacy(e) {
+        if (e) e.preventDefault();
+        showLegalModal('privacy');
+    }
+
+    function showTerms(e) {
+        if (e) e.preventDefault();
+        showLegalModal('terms');
+    }
+
+    function showLegalModal(type) {
+        var content = type === 'privacy'
+            ? '<h2>Политика обработки персональных данных</h2><p class="legal-subtitle">В соответствии с Федеральным законом от 27.07.2006 № 152-ФЗ «О персональных данных»</p><h3>1. Общие положения</h3><p>Настоящая политика определяет порядок обработки персональных данных у Оператора — ИП «ФИО» (далее — «Администрация»).</p><h3>2. Состав и категории обрабатываемых данных</h3><p>Администрация обрабатывает: фамилия, имя, отчество; номер телефона; адрес электронной почты; платёжные реквизиты (при возврате); история бронирований; IP-адрес, тип браузера.</p><h3>3. Правовые основания обработки</h3><p>ст. 6 152-ФЗ; договор бронирования (оферта); согласие субъекта; требования налогового законодательства.</p><h3>4. Цели обработки</h3><p>Подтверждение и исполнение бронирования; связь с гостем; ведение бухгалтерского учёта; направление информационных сообщений (с отдельного согласия).</p><h3>5. Порядок и условия обработки</h3><p>Обработка производится как с использованием средств автоматизации, так и без них. Срок хранения — 3 года после последнего бронирования.</p><h3>6. Трансграничная передача</h3><p>Не осуществляется.</p><h3>7. Права субъекта</h3><p>Получить информацию; требовать уточнения, блокирования или уничтожения; отозвать согласие; обжаловать действия в Роскомнадзоре. Запросы: hello@sotnur.ru с пометкой «ПД».</p><h3>8. Меры по защите данных</h3><p>Администрация принимает правовые, организационные и технические меры защиты.</p><h3>9. Уведомление об утечках</h3><p>В случае нарушения безопасности — уведомление Роскомнадзора и субъекта (ст. 21 152-ФЗ).</p><h3>10. Реквизиты</h3><p>ИП «ФИО»<br>ИНН: __________<br>ОГРНИП: __________<br>Email: hello@sotnur.ru</p>'
+            : '<h2>Правила бронирования и проживания</h2><p class="legal-subtitle">Публичная оферта (ст. 437 ГК РФ).</p><h3>1. Подтверждение брони</h3><p>После звонка менеджера в течение 30 минут. Выставляется счёт.</p><h3>2. Предоплата и оплата</h3><p>30% в течение 24 часов. Полная — в день заезда. Способы: наличные, банковский перевод, QR СБП.</p><h3>3. Отмена брони</h3><ul><li>За 7+ дней — возврат 100%</li><li>За 3–7 дней — возврат 50%</li><li>Менее 3 дней — не возвращается</li></ul><h3>4. Заезд/выезд</h3><p>Заезд с 14:00, выезд до 12:00.</p><h3>5. Правила проживания</h3><ul><li>Курение в домах запрещено (штраф 5000 ₽)</li><li>Животные только по согласованию</li><li>Тишина после 22:00</li><li>Запрещена пиротехника</li></ul><h3>6. Повреждения</h3><p>Составляется акт, стоимость по рыночным ценам.</p><h3>7. Залог</h3><p>2000–5000 ₽. Возврат в течение 3 дней.</p><h3>8. Ответственность</h3><p>Администрация не отвечает за утерю личных вещей. Гость — за порчу имущества.</p><h3>9. Реквизиты</h3><p>ИП «ФИО»<br>ИНН: __________<br>ОГРНИП: __________<br>hello@sotnur.ru</p>';
+
+        document.getElementById('legal-modal-content').innerHTML = content;
+        document.getElementById('legal-modal').style.display = 'flex';
+    }
+
+    function closeLegalModal() {
+        document.getElementById('legal-modal').style.display = 'none';
+    }
+
+    // Consent checkbox
     var consentCheckbox = document.getElementById('modal-consent');
     var submitBtn = document.getElementById('modal-submit-btn');
     if (consentCheckbox && submitBtn) {
@@ -299,141 +341,58 @@
             submitBtn.disabled = !this.checked;
         });
     }
-    
-    // Функции для юридических ссылок - модальные окна
-    function showPrivacy(e) {
-        if (e) e.preventDefault();
-        showLegalModal('privacy');
-    }
-    
-    function showTerms(e) {
-        if (e) e.preventDefault();
-        showLegalModal('terms');
-    }
-    
-    function showLegalModal(type) {
-        var content = type === 'privacy' 
-            ? '<h2>Политика обработки персональных данных</h2>' +
-              '<p class="legal-subtitle">В соответствии с Федеральным законом от 27.07.2006 № 152-ФЗ «О персональных данных»</p>' +
-              '<h3>1. Общие положения</h3>' +
-              '<p>Настоящая политика определяет порядок обработки персональных данных и меры по обеспечению их безопасности у Оператора — ИП «ФИО» (далее — «Администрация»).</p>' +
-              '<h3>2. Состав и категории обрабатываемых данных</h3>' +
-              '<p>Администрация обрабатывает следующие категории персональных данных: фамилия, имя, отчество; номер телефона; адрес электронной почты; платёжные реквизиты (при возврате). Обработка осуществляется исключительно для бронирования и связи с гостем.</p>' +
-              '<h3>3. Правовые основания обработки</h3>' +
-              '<p>Основанием обработки персональных данных являются: ст. 6 152-ФЗ; договор бронирования (оферта); согласие субъекта; требования налогового законодательства.</p>' +
-              '<h3>4. Цели обработки</h3>' +
-              '<p>Персональные данные обрабатываются в целях: подтверждения и исполнения бронирования; связи с гостем; ведения бухгалтерского учёта; направления информационных сообщений (с отдельного согласия).</p>' +
-              '<h3>5. Порядок и условия обработки</h3>' +
-              '<p>Обработка производится как с использованием средств автоматизации, так и без них. Срок хранения — 3 года после последнего бронирования, после чего данные уничтожаются. Доступ к данным имеют только уполномоченные сотрудники Администрации.</p>' +
-              '<h3>6. Трансграничная передача</h3>' +
-              '<p>Трансграничная передача персональных данных не осуществляется.</p>' +
-              '<h3>7. Права субъекта</h3>' +
-              '<p>Вы вправе: получить информацию об обработке ваших данных; требовать их уточнения, блокирования или уничтожения; отозвать согласие; обжаловать действия в Роскомнадзоре. Запросы направляйте на hello@sotnur.ru с пометкой «ПД».</p>' +
-              '<h3>8. Меры по защите данных</h3>' +
-              '<p>Администрация принимает необходимые правовые, организационные и технические меры для защиты персональных данных от неправомерного доступа, уничтожения, изменения, блокирования, копирования, распространения.</p>' +
-              '<h3>9. Уведомление об утечках</h3>' +
-              '<p>В случае нарушения безопасности данных Администрация уведомляет Роскомнадзор и субъекта в порядке, установленном ст. 21 152-ФЗ.</p>' +
-              '<h3>10. Реквизиты оператора</h3>' +
-              '<p>ИП «ФИО»<br>ИНН: __________<br>ОГРНИП: __________<br>Юридический адрес: __________<br>Email: hello@sotnur.ru</p>'
-            : '<h2>Правила бронирования и проживания</h2>' +
-              '<p class="legal-subtitle">Настоящий документ является публичной офертой (ст. 437 ГК РФ). Осуществляя бронирование, вы подтверждаете ознакомление и согласие с данными правилами.</p>' +
-              '<h3>1. Подтверждение брони</h3>' +
-              '<p>Бронирование подтверждается после звонка менеджера в течение 30 минут. После подтверждения выставляется счёт на предоплату.</p>' +
-              '<h3>2. Предоплата и оплата</h3>' +
-              '<p>Требуется предоплата 30% от стоимости проживания в течение 24 часов после подтверждения. Полная оплата — в день заезда. Способ оплаты: наличные, банковский перевод, QR СБП.</p>' +
-              '<h3>3. Отмена брони</h3>' +
-              '<ul><li>За 7+ дней до заезда — возврат 100% предоплаты</li><li>За 3–7 дней до заезда — возврат 50% предоплаты</li><li>Менее чем за 3 дня — предоплата не возвращается</li><li>При отмене по инициативе Администрации (форс-мажор) — возврат 100%</li></ul>' +
-              '<h3>4. Время заезда/выезда</h3>' +
-              '<p>Заезд с 14:00, выезд до 12:00. При раннем заезде или позднем выезде (по согласованию) — доплата 500 ₽/час.</p>' +
-              '<h3>5. Правила проживания</h3>' +
-              '<ul><li>Запрещено курение в домах (штраф 5000 ₽)</li><li>Запрещены животные без предварительного согласования</li><li>Уважайте тишину после 22:00</li><li>Запрещено использование пиротехники</li><li>Не оставляйте электроприборы включёнными при выходе</li><li>Соблюдайте правила пожарной безопасности</li></ul>' +
-              '<h3>6. Повреждения и уборка</h3>' +
-              '<p>При повреждении имущества составляется акт, стоимость определяется по рыночным ценам. Залог возвращается в течение 3 дней после выезда при отсутствии повреждений. Запачканная мебель/постель сверх нормы — оплачивается химчистка.</p>' +
-              '<h3>7. Залог</h3>' +
-              '<p>Залог за сохранность имущества: 2000–5000 ₽ (в зависимости от дома). Возвращается в течение 3 рабочих дней после выезда и осмотра.</p>' +
-              '<h3>8. Ответственность сторон</h3>' +
-              '<p>Администрация не несёт ответственности за утерю личных вещей гостя. Гость несёт полную материальную ответственность за порчу имущества.</p>' +
-              '<h3>9. Реквизиты</h3>' +
-              '<p>ИП «ФИО»<br>ИНН: __________<br>ОГРНИП: __________<br>hello@sotnur.ru</p>';
-        
-        document.getElementById('legal-modal-content').innerHTML = content;
-        document.getElementById('legal-modal').style.display = 'flex';
-    }
-    
-    function closeLegalModal() {
-        document.getElementById('legal-modal').style.display = 'none';
-    }
-    </script>
-    {% block scripts %}{% endblock %}
-<!-- Кнопка вверх -->
-    <button id="scroll-top" class="scroll-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="Наверх">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="18 15 12 9 6 15"></polyline>
-        </svg>
-    </button>
-    
-    <script>
-        // Показ кнопки вверх при скролле
-        window.addEventListener('scroll', function() {
-            var btn = document.getElementById('scroll-top');
-            if (btn) {
-                if (window.scrollY > 300) {
-                    btn.style.opacity = '1';
-                    btn.style.pointerEvents = 'auto';
-                } else {
-                    btn.style.opacity = '0';
-                    btn.style.pointerEvents = 'none';
-                }
+
+    // ---- Booking Modal ----
+    (function() {
+        var modal = document.getElementById('booking-modal');
+        var closeBtn = document.getElementById('modal-close');
+        var quickBtns = document.querySelectorAll('.quick-book-btn');
+        var houseIdInput = document.getElementById('modal-house-id');
+        var houseNameSpan = document.getElementById('modal-house-name');
+        var form = document.getElementById('quick-book-form');
+        var successDiv = document.getElementById('modal-success');
+
+        quickBtns.forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                houseIdInput.value = this.dataset.houseId;
+                houseNameSpan.textContent = this.dataset.houseName;
+                modal.classList.add('show');
+            });
+        });
+
+        if (closeBtn) closeBtn.addEventListener('click', function() {
+            modal.classList.remove('show');
+            form.style.display = 'block';
+            successDiv.style.display = 'none';
+        });
+
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.classList.remove('show');
+                form.style.display = 'block';
+                successDiv.style.display = 'none';
             }
         });
-    </script>
-    
-    <!-- Custom Select JS -->
-    <script>
-    (function() {
-        function initCustomSelects() {
-            document.querySelectorAll('.select-trigger').forEach(function(trigger) {
-                trigger.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    var parent = this.parentElement;
-                    var dropdown = parent.querySelector('.select-dropdown');
-                    document.querySelectorAll('.select-dropdown').forEach(function(d) {
-                        if (d !== dropdown) d.classList.remove('active');
-                    });
-                    dropdown.classList.toggle('active');
-                });
+
+        if (form) {
+            form.addEventListener('submit', function() {
+                var loading = document.getElementById('modal-loading');
+                if (loading) {
+                    form.style.display = 'none';
+                    loading.style.display = 'flex';
+                    var dots = loading.querySelector('.loading-dots');
+                    var count = 0;
+                    setInterval(function() {
+                        count = (count + 1) % 3;
+                        if (dots) dots.textContent = ['.','..','...'][count];
+                    }, 500);
+                }
             });
-            
-            document.querySelectorAll('.select-option').forEach(function(option) {
-                option.addEventListener('click', function() {
-                    var parent = this.closest('.custom-select');
-                    var trigger = parent.querySelector('.select-trigger');
-                    var input = parent.querySelector('input');
-                    var value = this.dataset.value;
-                    
-                    input.value = value;
-                    trigger.textContent = this.textContent;
-                    parent.querySelector('.select-dropdown').classList.remove('active');
-                });
-            });
-            
-            document.addEventListener('click', function() {
-                document.querySelectorAll('.select-dropdown').forEach(function(d) {
-                    d.classList.remove('active');
-                });
-            });
-        }
-        
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initCustomSelects);
-        } else {
-            initCustomSelects();
         }
     })();
-</script>
-    
-    <!-- Widget Calendar JS (рефакторинг: использует SotnurCalendarUtils) -->
-    <script>
+
+    // ---- Widget Calendar ----
     var widgetMonths = { checkin: new Date(), checkout: new Date() };
     var widgetSelected = { checkin: null, checkout: null };
     var fullyBookedDates = {{ fully_booked_dates|default([])|tojson }};
@@ -441,7 +400,6 @@
     function initWidgetCalendar() {
         document.querySelectorAll('.calendar-trigger-widget').forEach(function(trigger) {
             trigger.addEventListener('click', function(e) {
-                // Игнорируем клики внутри модального окна (обрабатываются modalCal)
                 if (this.closest('#booking-modal')) return;
                 e.stopPropagation();
                 var target = this.dataset.target;
@@ -453,16 +411,12 @@
                 renderWidgetCalendar(target);
             });
         });
-
         document.addEventListener('click', function(e) {
-            var widget = e.target.closest('.airbnb-calendar-widget');
-            if (!widget || widget.closest('#booking-modal')) {
-                document.querySelectorAll('.calendar-dropdown-widget').forEach(function(d) {
-                    d.classList.remove('active');
-                });
+            var w = e.target.closest('.airbnb-calendar-widget');
+            if (!w || w.closest('#booking-modal')) {
+                document.querySelectorAll('.calendar-dropdown-widget').forEach(function(d) { d.classList.remove('active'); });
             }
         });
-
         renderWidgetCalendar('checkin');
         renderWidgetCalendar('checkout');
     }
@@ -473,77 +427,55 @@
         if (!myEl || !daysEl) return;
         var date = widgetMonths[target];
         if (!date) return;
-
         myEl.textContent = SotnurCalendarUtils.monthNames[date.getMonth()] + ' ' + date.getFullYear();
-
         var grid = SotnurCalendarUtils.buildMonthGrid(date.getFullYear(), date.getMonth());
-
         var html = '';
         for (var i = 0; i < grid.length; i++) {
             var cell = grid[i];
-            if (!cell) {
-                html += '<div class="cal-day disabled"></div>';
-            } else {
-                var isSelected = widgetSelected[target] === cell.dateStr;
-                var isBooked = !cell.isPast && fullyBookedDates.indexOf(cell.dateStr) !== -1;
-                var classes = ['cal-day'];
-                if (cell.isPast) classes.push('disabled');
-                if (isBooked) classes.push('booked');
-                if (isSelected) classes.push('selected');
-                html += '<div class="' + classes.join(' ') + '" data-date="' + cell.dateStr + '" onclick="selectWidgetDate(\'' + target + '\', \'' + cell.dateStr + '\')">' + cell.day + '</div>';
+            if (!cell) { html += '<div class="cal-day disabled"></div>'; }
+            else {
+                var sel = widgetSelected[target] === cell.dateStr;
+                var booked = !cell.isPast && fullyBookedDates.indexOf(cell.dateStr) !== -1;
+                var cls = ['cal-day'];
+                if (cell.isPast) cls.push('disabled');
+                if (booked) cls.push('booked');
+                if (sel) cls.push('selected');
+                html += '<div class="' + cls.join(' ') + '" data-date="' + cell.dateStr + '" onclick="selectWidgetDate(\'' + target + '\', \'' + cell.dateStr + '\')">' + cell.day + '</div>';
             }
         }
-
         daysEl.innerHTML = html;
     };
 
     window.selectWidgetDate = function(target, dateStr) {
-        var parts = dateStr.split('-');
-        var year = parseInt(parts[0]);
-        var month = parseInt(parts[1]) - 1;
-        var day = parseInt(parts[2]);
-
-        var currentDate = new Date(Date.UTC(year, month, day));
+        var parts = dateStr.split('-'), y = parseInt(parts[0]), m = parseInt(parts[1])-1, d = parseInt(parts[2]);
+        var dt = new Date(Date.UTC(y, m, d));
         var today = new Date(Date.UTC(new Date().getFullYear(), new Date().getMonth(), new Date().getDate()));
-
-        if (currentDate < today) return;
+        if (dt < today) return;
         if (fullyBookedDates.indexOf(dateStr) !== -1) return;
-
         widgetSelected[target] = dateStr;
-
         var trigger = document.getElementById(target + '-trigger');
         var input = document.getElementById(target);
-
-        trigger.textContent = day + ' ' + SotnurCalendarUtils.monthNames[month];
+        var dateObj = new Date(dateStr);
+        trigger.textContent = dateObj.getDate() + ' ' + SotnurCalendarUtils.monthNames[dateObj.getMonth()];
         input.value = dateStr;
-
-        var dropdown = document.getElementById(target + '-dropdown');
-        if (dropdown) dropdown.classList.remove('active');
+        var dd = document.getElementById(target + '-dropdown');
+        if (dd) dd.classList.remove('active');
         renderWidgetCalendar('checkin');
         renderWidgetCalendar('checkout');
     };
 
     window.widgetCalPrev = function(target) {
-        if (!widgetMonths[target]) return;
-        widgetMonths[target].setMonth(widgetMonths[target].getMonth() - 1);
-        renderWidgetCalendar(target);
+        if (widgetMonths[target]) { widgetMonths[target].setMonth(widgetMonths[target].getMonth() - 1); renderWidgetCalendar(target); }
     };
 
     window.widgetCalNext = function(target) {
-        if (!widgetMonths[target]) return;
-        widgetMonths[target].setMonth(widgetMonths[target].getMonth() + 1);
-        renderWidgetCalendar(target);
+        if (widgetMonths[target]) { widgetMonths[target].setMonth(widgetMonths[target].getMonth() + 1); renderWidgetCalendar(target); }
     };
 
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initWidgetCalendar);
-    } else {
-        initWidgetCalendar();
-    }
-    </script>
-    
-    <!-- Modal Calendar JS (исправлен: консистентные target='modal-checkin/modal-checkout') -->
-    <script>
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initWidgetCalendar);
+    else initWidgetCalendar();
+
+    // ---- Modal Calendar ----
     (function() {
         var modalMonths = { 'modal-checkin': new Date(), 'modal-checkout': new Date() };
         var modalSelected = { 'modal-checkin': null, 'modal-checkout': null };
@@ -561,12 +493,9 @@
                     renderModalCalendar(target);
                 });
             });
-
             document.querySelector('#booking-modal').addEventListener('click', function(e) {
                 if (!e.target.closest('.airbnb-calendar-widget')) {
-                    document.querySelectorAll('#booking-modal .calendar-dropdown-widget').forEach(function(d) {
-                        d.classList.remove('active');
-                    });
+                    document.querySelectorAll('#booking-modal .calendar-dropdown-widget').forEach(function(d) { d.classList.remove('active'); });
                 }
             });
         }
@@ -576,70 +505,53 @@
             var daysEl = document.getElementById(target + '-days');
             var date = modalMonths[target];
             if (!date) return;
-
             myEl.textContent = SotnurCalendarUtils.monthNames[date.getMonth()] + ' ' + date.getFullYear();
-
             var grid = SotnurCalendarUtils.buildMonthGrid(date.getFullYear(), date.getMonth());
-
             var html = '';
             for (var i = 0; i < grid.length; i++) {
                 var cell = grid[i];
-                if (!cell) {
-                    html += '<div class="cal-day disabled"></div>';
-                } else {
-                    var isSelected = modalSelected[target] === cell.dateStr;
-                    var isBooked = !cell.isPast && fullyBookedDates.indexOf(cell.dateStr) !== -1;
-                    var classes = ['cal-day'];
-                    if (cell.isPast) classes.push('disabled');
-                    if (isBooked) classes.push('booked');
-                    if (isSelected) classes.push('selected');
-                    html += '<div class="' + classes.join(' ') + '" data-date="' + cell.dateStr + '" onclick="selectModalDate(\'' + target + '\', \'' + cell.dateStr + '\')">' + cell.day + '</div>';
+                if (!cell) { html += '<div class="cal-day disabled"></div>'; }
+                else {
+                    var sel = modalSelected[target] === cell.dateStr;
+                    var booked = !cell.isPast && fullyBookedDates.indexOf(cell.dateStr) !== -1;
+                    var cls = ['cal-day'];
+                    if (cell.isPast) cls.push('disabled');
+                    if (booked) cls.push('booked');
+                    if (sel) cls.push('selected');
+                    html += '<div class="' + cls.join(' ') + '" data-date="' + cell.dateStr + '" onclick="selectModalDate(\'' + target + '\', \'' + cell.dateStr + '\')">' + cell.day + '</div>';
                 }
             }
-
             daysEl.innerHTML = html;
         }
 
         window.selectModalDate = function(target, dateStr) {
-            var currentDate = new Date(dateStr);
-            var today = new Date();
-            today.setHours(0, 0, 0, 0);
-
-            if (currentDate < today) return;
+            var dt = new Date(dateStr);
+            var today = new Date(); today.setHours(0,0,0,0);
+            if (dt < today) return;
             if (fullyBookedDates.indexOf(dateStr) !== -1) return;
-
             modalSelected[target] = dateStr;
-
             var trigger = document.getElementById(target + '-trigger');
             var input = document.getElementById(target);
             var dateObj = new Date(dateStr);
-
             trigger.textContent = dateObj.getDate() + ' ' + SotnurCalendarUtils.monthNames[dateObj.getMonth()];
             input.value = dateStr;
-
             document.getElementById(target + '-dropdown').classList.remove('active');
             renderModalCalendar('modal-checkin');
             renderModalCalendar('modal-checkout');
         };
 
         window.modalCalPrev = function(target) {
-            if (!modalMonths[target]) return;
-            modalMonths[target].setMonth(modalMonths[target].getMonth() - 1);
-            renderModalCalendar(target);
+            if (modalMonths[target]) { modalMonths[target].setMonth(modalMonths[target].getMonth() - 1); renderModalCalendar(target); }
         };
 
         window.modalCalNext = function(target) {
-            if (!modalMonths[target]) return;
-            modalMonths[target].setMonth(modalMonths[target].getMonth() + 1);
-            renderModalCalendar(target);
+            if (modalMonths[target]) { modalMonths[target].setMonth(modalMonths[target].getMonth() + 1); renderModalCalendar(target); }
         };
 
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initModalCalendar);
-        } else {
-            initModalCalendar();
-        }
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initModalCalendar);
+        else initModalCalendar();
     })();
     </script>
+    {% block scripts %}{% endblock %}
 </body>
 </html>
