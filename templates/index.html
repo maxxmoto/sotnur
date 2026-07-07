@@ -42,18 +42,38 @@
                     <svg class="widget-field-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
                 </div>
                 <div class="widget-field-item">
-                    <div style="flex:1;">
-                        <p class="widget-field-label">Заезд</p>
-                        <div class="airbnb-calendar-widget" id="checkin-widget" style="display:inline-block;">
-                            <input type="hidden" id="checkin" name="checkin" value="{{ checkin or '' }}">
-                            <span class="widget-field-value calendar-trigger-widget" id="checkin-trigger" data-target="checkin" style="background:transparent;padding:0;border:none;">{{ checkin or 'Выберите дату' }}</span>
+                    <div style="flex:1;display:flex;gap:8px;">
+                        <div style="flex:1;">
+                            <p class="widget-field-label">Заезд</p>
+                            <div class="airbnb-calendar-widget" id="checkin-widget">
+                                <input type="hidden" id="checkin" name="checkin" value="{{ checkin or '' }}">
+                                <span class="widget-field-value calendar-trigger-widget" id="checkin-trigger" data-target="checkin" style="cursor:pointer;">{{ checkin or 'Выберите дату' }}</span>
+                                <div class="calendar-dropdown-widget" id="checkin-dropdown">
+                                    <div class="cal-header">
+                                        <button type="button" class="cal-btn" onclick="widgetCalPrev('checkin')">←</button>
+                                        <span class="cal-my" id="checkin-my"></span>
+                                        <button type="button" class="cal-btn" onclick="widgetCalNext('checkin')">→</button>
+                                    </div>
+                                    <div class="cal-week"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div>
+                                    <div class="cal-days-widget" id="checkin-days"></div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div style="flex:1;">
-                        <p class="widget-field-label">Выезд</p>
-                        <div class="airbnb-calendar-widget" id="checkout-widget" style="display:inline-block;">
-                            <input type="hidden" id="checkout" name="checkout" value="{{ checkout or '' }}">
-                            <span class="widget-field-value calendar-trigger-widget" id="checkout-trigger" data-target="checkout" style="background:transparent;padding:0;border:none;">{{ checkout or 'Выберите дату' }}</span>
+                        <div style="flex:1;">
+                            <p class="widget-field-label">Выезд</p>
+                            <div class="airbnb-calendar-widget" id="checkout-widget">
+                                <input type="hidden" id="checkout" name="checkout" value="{{ checkout or '' }}">
+                                <span class="widget-field-value calendar-trigger-widget" id="checkout-trigger" data-target="checkout" style="cursor:pointer;">{{ checkout or 'Выберите дату' }}</span>
+                                <div class="calendar-dropdown-widget" id="checkout-dropdown">
+                                    <div class="cal-header">
+                                        <button type="button" class="cal-btn" onclick="widgetCalPrev('checkout')">←</button>
+                                        <span class="cal-my" id="checkout-my"></span>
+                                        <button type="button" class="cal-btn" onclick="widgetCalNext('checkout')">→</button>
+                                    </div>
+                                    <div class="cal-week"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div>
+                                    <div class="cal-days-widget" id="checkout-days"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <svg class="widget-field-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
@@ -479,5 +499,13 @@ var reviewsTrack = document.getElementById('reviews-track');
 if (reviewsTrack && reviewsTrack.children.length === 0) {
     reviewsTrack.innerHTML = '<div class="review-card" style="min-width:200px;"><p class="review-text">Пока нет отзывов</p></div>';
 }
+
+// Auto-scroll to houses if filter applied
+{% if filter_applied %}
+setTimeout(function() {
+    var el = document.getElementById('houses');
+    if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+}, 300);
+{% endif %}
 </script>
 {% endblock %}

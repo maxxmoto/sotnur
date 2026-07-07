@@ -51,6 +51,19 @@
         </div>
     </header>
 
+    <!-- Mobile Nav Overlay -->
+    <div class="nav-overlay" id="nav-overlay">
+        <button class="nav-overlay-close" onclick="closeNavMenu()">&times;</button>
+        <div class="nav-overlay-content">
+            <a href="/" class="nav-overlay-link" onclick="closeNavMenu()">Главная</a>
+            <a href="/#houses" class="nav-overlay-link" onclick="closeNavMenu()">Дома</a>
+            <a href="/#contacts" class="nav-overlay-link" onclick="closeNavMenu()">Контакты</a>
+            <hr class="nav-overlay-divider">
+            <a href="https://t.me/..." target="_blank" class="nav-overlay-link" onclick="closeNavMenu()">Telegram</a>
+            <a href="https://wa.me/79370000000" target="_blank" class="nav-overlay-link" onclick="closeNavMenu()">WhatsApp</a>
+        </div>
+    </div>
+
     <div class="header-spacer"></div>
 
     <!-- Main Content -->
@@ -331,6 +344,15 @@
 
     function closeLegalModal() {
         document.getElementById('legal-modal').style.display = 'none';
+    }
+
+    // Nav menu toggle
+    document.getElementById('menu-toggle').addEventListener('click', function() {
+        document.getElementById('nav-overlay').classList.toggle('show');
+    });
+
+    function closeNavMenu() {
+        document.getElementById('nav-overlay').classList.remove('show');
     }
 
     // Consent checkbox
