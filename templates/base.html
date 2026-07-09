@@ -435,7 +435,7 @@
         });
         document.addEventListener('click', function(e) {
             var w = e.target.closest('.airbnb-calendar-widget');
-            if (!w || w.closest('#booking-modal')) {
+            if (!w) {
                 document.querySelectorAll('.calendar-dropdown-widget').forEach(function(d) { d.classList.remove('active'); });
             }
         });

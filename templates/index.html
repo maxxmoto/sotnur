@@ -85,19 +85,19 @@
                             <input type="hidden" id="guests" name="guests" value="{{ guests or '' }}">
                             <span class="widget-field-value select-trigger" id="guests-trigger" style="cursor:pointer;">
                                 {% set g = guests|default('')|int %}
-                                {% if g == 0 %}Сколько?{% elif g < 7 %}{{ g }} гостя{% else %}7+ гостей{% endif %}
+                                {% if g == 0 %}Сколько?{% elif g == 1 %}1 гость{% elif g < 7 %}{{ g }} гостя{% else %}7+ гостей{% endif %}
                             </span>
-                            <div class="select-dropdown" style="display:none;position:absolute;top:100%;left:0;background:var(--white);border:1px solid var(--border);border-radius:var(--radius-xs);box-shadow:var(--shadow-lg);z-index:10;min-width:160px;margin-top:4px;">
-                                <div class="select-option" data-value="" style="padding:10px 14px;font-size:14px;cursor:pointer;">Сколько гостей?</div>
+                            <div class="select-dropdown" style="display:none;">
+                                <div class="select-option" data-value="">Сколько гостей?</div>
                                 {% for i in range(1,8) %}
-                                <div class="select-option" data-value="{{ i }}" style="padding:10px 14px;font-size:14px;cursor:pointer;">
-                                    {% if i == 1 %}1 гость{% elif i < 5 %}{{ i }} гостя{% else %}{{ i }} гостей{% endif %}
+                                <div class="select-option" data-value="{{ i }}">
+                                    {% if i == 1 %}1 гость{% elif i >= 2 and i <= 4 %}{{ i }} гостя{% else %}{{ i }} гостей{% endif %}
                                 </div>
                                 {% endfor %}
                             </div>
                         </div>
                     </div>
-                    <svg class="widget-field-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+                    <svg class="widget-field-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
                 </div>
             </div>
             <button type="submit" class="widget-submit-btn">Подобрать номер</button>
@@ -401,7 +401,7 @@
     <span class="no-results-icon">&#128270;</span>
     <h3>Домов по вашим критериям не найдено</h3>
     <p>Попробуйте изменить параметры поиска</p>
-    <a href="/" class="btn-outline" style="display:inline-block;padding:12px 24px;">Сбросить фильтры</a>
+    <a href="/" class="btn-outline">Сбросить фильтры</a>
 </div>
 {% endif %}
 {% endblock %}
@@ -466,7 +466,8 @@ function toggleFaq(btn) {
     });
 
     document.querySelectorAll('.select-option').forEach(function(opt) {
-        opt.addEventListener('click', function() {
+        opt.addEventListener('click', function(e) {
+            e.stopPropagation();
             var parent = this.closest('.custom-select');
             var trigger = parent.querySelector('.select-trigger');
             var input = parent.querySelector('input');

@@ -259,7 +259,6 @@ input, select, textarea { font-family: inherit; }
 .widget-field-item {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     background: var(--bg);
     padding: 14px 16px;
     border-radius: var(--radius-xs);
@@ -280,7 +279,40 @@ input, select, textarea { font-family: inherit; }
 .widget-field-icon {
     color: var(--primary);
     flex-shrink: 0;
+    margin-left: auto;
 }
+
+/* ===== CUSTOM SELECT (гости) ===== */
+.select-trigger {
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.select-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xs);
+    box-shadow: var(--shadow-lg);
+    z-index: 100;
+    min-width: 160px;
+    margin-top: 4px;
+}
+
+.select-dropdown.active { display: block; }
+
+.select-option {
+    padding: 10px 14px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.select-option:hover { background: var(--bg); }
 
 .widget-submit-btn {
     width: 100%;
@@ -597,6 +629,7 @@ input, select, textarea { font-family: inherit; }
 }
 
 .video-action-btn {
+    display: inline-block;
     background: var(--primary);
     color: white;
     padding: 10px 24px;
@@ -1256,6 +1289,21 @@ input, select, textarea { font-family: inherit; }
 }
 
 .calendar-dropdown.active, .calendar-dropdown-widget.active { display: block; }
+
+@media (max-width: 768px) {
+    .calendar-dropdown-widget.active {
+        width: calc(100vw - 40px);
+        max-width: 280px;
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+    }
+    .calendar-dropdown.active {
+        left: 50%;
+        transform: translateX(-50%);
+        max-width: 90vw;
+    }
+}
 
 .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
 
@@ -1987,10 +2035,12 @@ input, select, textarea { font-family: inherit; }
     font-size: 13px;
     transition: var(--transition);
     text-align: center;
-    flex: 1;
+    display: inline-block;
 }
 
 .btn-outline:hover { background: var(--primary); color: white; }
+
+.house-actions .btn-outline { flex: 1; }
 
 /* ===== RESPONSIVE ===== */
 
@@ -2083,13 +2133,13 @@ body { padding-bottom: 80px; }
     .hero-dots { right: 40px; }
     
     .booking-widget { margin-top: -60px; max-width: 900px; }
-    .widget-card { padding: 20px 24px; flex-direction: row; align-items: center; }
-    .widget-card form { flex: 1; }
-    .widget-row { gap: 0; }
+    .widget-card { padding: 20px 24px; }
+    .booking-form { flex-direction: row; align-items: center; gap: 0; }
+    .widget-row { flex: 1; }
     .widget-field-item { flex: 1; padding: 12px 20px; }
     .widget-field-label { font-size: 11px; }
     .widget-field-value { font-size: 14px; }
-    .widget-submit-btn { width: auto; margin-top: 0; padding: 14px 32px; flex-shrink: 0; }
+    .widget-submit-btn { width: auto; flex-shrink: 0; margin-left: 16px; padding: 14px 28px; }
     
     .scroll-card { min-width: 380px; }
     .review-card { min-width: 360px; }
