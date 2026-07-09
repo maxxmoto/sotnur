@@ -280,7 +280,44 @@ input, select, textarea { font-family: inherit; }
     color: var(--primary);
     flex-shrink: 0;
     margin-left: auto;
+    min-width: 18px;
 }
+
+.widget-date-row {
+    flex: 1;
+    display: flex;
+    gap: 12px;
+}
+
+.widget-date-row > div { flex: 1; min-width: 0; }
+
+/* ===== CALENDAR TRIGGER ===== */
+.calendar-trigger-widget {
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    display: inline-block;
+    padding: 2px 0;
+    border-bottom: 1px dashed var(--primary);
+    line-height: 1.3;
+    transition: var(--transition);
+}
+
+.calendar-trigger-widget:hover {
+    border-bottom-style: solid;
+}
+
+.calendar-trigger {
+    cursor: pointer;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xs);
+    font-size: 14px;
+    transition: var(--transition);
+    background: var(--white);
+}
+
+.calendar-trigger:hover { border-color: var(--primary); }
 
 /* ===== CUSTOM SELECT (гости) ===== */
 .select-trigger {
@@ -348,7 +385,8 @@ input, select, textarea { font-family: inherit; }
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 12px;
+    margin: 12px auto 0;
+    max-width: 440px;
     box-shadow: var(--shadow);
 }
 
@@ -2200,9 +2238,21 @@ body { padding-bottom: 80px; }
     .hero { height: 70vh; }
     .hero-title { font-size: 24px; }
     .hero-content { bottom: 60px; padding: 0 20px; }
+    .hero-desc { font-size: 15px; margin-bottom: 18px; }
     .hero-dots { right: 16px; bottom: 100px; }
+    .hero-btn { font-size: 14px; padding: 10px 28px; }
+    
     .widget-field-item { padding: 10px 12px; }
     .widget-field-value { font-size: 13px; }
+    .widget-field-label { font-size: 11px; }
+    .calendar-trigger-widget { font-size: 13px; }
+    .select-trigger { font-size: 13px; }
+    .widget-field-icon { min-width: 16px; }
+    .widget-field-icon svg { width: 16px; height: 16px; }
+    
+    /* Date fields stack vertically on tiny screens */
+    .widget-field-item .widget-date-row { flex-direction: column; gap: 8px; }
+    
     .scroll-card { min-width: 88vw; }
     .review-card { min-width: 82vw; }
     .activity-card { height: 110px; }
@@ -2214,12 +2264,50 @@ body { padding-bottom: 80px; }
     .weather-widget { padding: 12px; }
     .weather-temp { font-size: 16px; }
     .booking-widget { margin-top: -40px; }
+    .widget-submit-btn { padding: 14px; font-size: 15px; }
     .cookie-banner { bottom: 80px; }
     .floating-chat { bottom: 80px; width: 48px; height: 48px; }
     .sticky-bar-label { font-size: 11px; }
     .sticky-bar-price { font-size: 17px; }
-    .sticky-bar-btn { padding: 10px 24px; font-size: 14px; }
+    .sticky-bar-btn { padding: 10px 20px; font-size: 14px; }
     .nav-overlay-link { font-size: 18px; }
+    
+    /* Modal responsive */
+    .modal-content { padding: 20px 16px; margin: 0 8px; }
+    .modal-content .form-row { grid-template-columns: 1fr; gap: 14px; }
+    .modal-title { font-size: 18px; }
+    .booking-card { padding: 20px 16px; }
+    .booking-card .form-row { grid-template-columns: 1fr; gap: 14px; }
+    
+    /* Calendar dropdown flush */
+    .calendar-dropdown-widget.active {
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        min-width: 280px !important;
+        width: calc(100vw - 32px) !important;
+    }
+    
+    /* House page responsive */
+    .house-page { padding: 16px 12px 40px; }
+    .house-title { font-size: 20px; }
+    .price-amount { font-size: 24px; }
+    .amenities-grid { grid-template-columns: 1fr; }
+    
+    /* Footer */
+    .footer-inner { padding: 24px 16px; }
+}
+
+/* Mobile medium (< 400px) */
+@media (max-width: 400px) {
+    .hero-title { font-size: 22px; }
+    .widget-field-item { padding: 8px 10px; flex-wrap: wrap; }
+    .widget-field-item .widget-date-row { flex-direction: column; width: 100%; }
+    .scroll-card { min-width: 92vw; }
+    .review-card { min-width: 88vw; }
+    .calendar-dropdown-widget.active { min-width: 260px !important; }
+    .weather-item { gap: 6px; }
+    .weather-icon-bg { width: 32px; height: 32px; }
+    .weather-icon-bg svg { width: 18px; height: 18px; }
 }
 
 /* ===== LEGAL PAGES ===== */

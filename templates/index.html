@@ -42,12 +42,12 @@
                     <svg class="widget-field-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
                 </div>
                 <div class="widget-field-item">
-                    <div style="flex:1;display:flex;gap:12px;">
+                    <div class="widget-date-row">
                         <div style="flex:1;">
                             <p class="widget-field-label">Заезд</p>
                             <div class="airbnb-calendar-widget" id="checkin-widget">
                                 <input type="hidden" id="checkin" name="checkin" value="{{ checkin or '' }}">
-                                <span class="widget-field-value calendar-trigger-widget" id="checkin-trigger" data-target="checkin" style="cursor:pointer;">{{ checkin or 'Выберите дату' }}</span>
+                                <span class="widget-field-value calendar-trigger-widget" id="checkin-trigger" data-target="checkin">{{ checkin or 'Выберите дату' }}</span>
                                 <div class="calendar-dropdown-widget" id="checkin-dropdown">
                                     <div class="cal-header">
                                         <button type="button" class="cal-btn" onclick="widgetCalPrev('checkin')">←</button>
@@ -63,7 +63,7 @@
                             <p class="widget-field-label">Выезд</p>
                             <div class="airbnb-calendar-widget" id="checkout-widget">
                                 <input type="hidden" id="checkout" name="checkout" value="{{ checkout or '' }}">
-                                <span class="widget-field-value calendar-trigger-widget" id="checkout-trigger" data-target="checkout" style="cursor:pointer;">{{ checkout or 'Выберите дату' }}</span>
+                                <span class="widget-field-value calendar-trigger-widget" id="checkout-trigger" data-target="checkout">{{ checkout or 'Выберите дату' }}</span>
                                 <div class="calendar-dropdown-widget" id="checkout-dropdown">
                                     <div class="cal-header">
                                         <button type="button" class="cal-btn" onclick="widgetCalPrev('checkout')">←</button>
